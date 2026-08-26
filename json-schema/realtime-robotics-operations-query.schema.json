@@ -1,0 +1,1975 @@
+{
+  "$defs": {
+    "CartesianHybridSegment": {
+      "properties": {
+        "interpolation": {
+          "const": "cartesian",
+          "type": "string"
+        },
+        "speed": {
+          "$ref": "#/$defs/MaxTcpSpeed",
+          "default": {
+            "type": "max_tcp_speed",
+            "value": 1.0
+          }
+        },
+        "switch_distance": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "interpolation",
+        "switch_distance"
+      ],
+      "title": "Cartesian Hybrid Segment",
+      "type": "object"
+    },
+    "CartesianTargetTaskInfo": {
+      "description": "Configuration for a target-based task",
+      "properties": {
+        "target": {
+          "type": "string"
+        },
+        "on_target_commands": {
+          "items": {
+            "$ref": "#/$defs/TargetTaskOnTargetSubtask"
+          },
+          "type": "array"
+        },
+        "approach": {
+          "items": {
+            "$ref": "#/$defs/TargetTaskTransientSubtask"
+          },
+          "type": "array"
+        },
+        "retreat": {
+          "items": {
+            "$ref": "#/$defs/TargetTaskTransientSubtask"
+          },
+          "type": "array"
+        },
+        "configuration_setting": {
+          "$ref": "#/$defs/ConfigurationSetting"
+        },
+        "material_thickness": {
+          "anyOf": [
+            {
+              "type": "number"
+            }
+          ],
+          "description": "Material thickness in meters"
+        },
+        "interpolation": {
+          "const": "cartesian",
+          "type": "string"
+        },
+        "speed": {
+          "$ref": "#/$defs/MaxTcpSpeed",
+          "default": {
+            "type": "max_tcp_speed",
+            "value": 1.0
+          }
+        },
+        "move_type": {
+          "$ref": "#/$defs/MoveType",
+          "default": "planning"
+        }
+      },
+      "required": [
+        "target",
+        "on_target_commands",
+        "approach",
+        "retreat",
+        "configuration_setting",
+        "interpolation"
+      ],
+      "title": "Cartesian Target Task Info",
+      "type": "object"
+    },
+    "ConfigurationSetting": {
+      "discriminator": {
+        "mapping": {
+          "keep_configuration": "#/$defs/KeepConfiguration",
+          "optimize_configuration": "#/$defs/OptimizeConfiguration",
+          "optimize_tool_rx": "#/$defs/OptimizeToolRx",
+          "optimize_tool_ry": "#/$defs/OptimizeToolRy",
+          "optimize_tool_rz": "#/$defs/OptimizeToolRz",
+          "optimize_tool_within_box": "#/$defs/OptimizeToolWithinBox"
+        },
+        "propertyName": "type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/KeepConfiguration"
+        },
+        {
+          "$ref": "#/$defs/OptimizeToolWithinBox"
+        },
+        {
+          "$ref": "#/$defs/OptimizeConfiguration"
+        },
+        {
+          "$ref": "#/$defs/OptimizeToolRx"
+        },
+        {
+          "$ref": "#/$defs/OptimizeToolRy"
+        },
+        {
+          "$ref": "#/$defs/OptimizeToolRz"
+        }
+      ],
+      "title": "Configuration Setting"
+    },
+    "Constraint": {
+      "description": "Constraint between actions\\n    ",
+      "properties": {
+        "preceding_id": {
+          "description": "Preceding action ID",
+          "type": "string"
+        },
+        "preceding_constraint": {
+          "$ref": "#/$defs/ConstraintType",
+          "description": "Preceder must complete motion/task before this action can start"
+        },
+        "succeeding_constraint": {
+          "$ref": "#/$defs/ConstraintType",
+          "description": "Succeeder must not start motion/task until the preceder has been satisfied"
+        }
+      },
+      "required": [
+        "preceding_id",
+        "preceding_constraint",
+        "succeeding_constraint"
+      ],
+      "title": "Constraint",
+      "type": "object"
+    },
+    "ConstraintType": {
+      "description": "Type of constraint for precedence relationships\\n    ",
+      "enum": [
+        "motion",
+        "departure",
+        "task"
+      ],
+      "title": "ConstraintType",
+      "type": "string"
+    },
+    "DirectMotionSubAction": {
+      "description": "Direct motion control inputs",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Description of the action"
+        },
+        "type": {
+          "const": "direct_move",
+          "type": "string"
+        },
+        "subtask_points": {
+          "items": {
+            "$ref": "#/$defs/SubtaskInputPoint"
+          },
+          "type": "array"
+        },
+        "subtask_duration": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            }
+          ],
+          "description": "The time in seconds to spend in the subtask"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "subtask_points"
+      ],
+      "title": "Direct Motion Sub Action",
+      "type": "object"
+    },
+    "DocAndEndCondition": {
+      "description": "Combination of end conditions with AND logic",
+      "properties": {
+        "type": {
+          "const": "and",
+          "type": "string"
+        },
+        "conditions": {
+          "items": {
+            "$ref": "#/$defs/EndConditionPlaceholder"
+          },
+          "minItems": 2,
+          "type": "array"
+        }
+      },
+      "required": [
+        "type",
+        "conditions"
+      ],
+      "title": "And",
+      "type": "object"
+    },
+    "DocEndCondition": {
+      "description": "Conditions for the end of an optimization run",
+      "discriminator": {
+        "mapping": {
+          "and": "#/$defs/DocAndEndCondition",
+          "or": "#/$defs/DocOrEndCondition",
+          "time_convergence": "#/$defs/TimeConvergenceEndCondition",
+          "time_elapsed": "#/$defs/TimeElapsedEndCondition"
+        },
+        "propertyName": "type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TimeConvergenceEndCondition"
+        },
+        {
+          "$ref": "#/$defs/TimeElapsedEndCondition"
+        },
+        {
+          "$ref": "#/$defs/DocOrEndCondition"
+        },
+        {
+          "$ref": "#/$defs/DocAndEndCondition"
+        }
+      ],
+      "title": "End Condition"
+    },
+    "DocOrEndCondition": {
+      "description": "Combination of end conditions with OR logic",
+      "properties": {
+        "type": {
+          "const": "or",
+          "type": "string"
+        },
+        "conditions": {
+          "items": {
+            "$ref": "#/$defs/EndConditionPlaceholder"
+          },
+          "minItems": 2,
+          "type": "array"
+        }
+      },
+      "required": [
+        "type",
+        "conditions"
+      ],
+      "title": "Or",
+      "type": "object"
+    },
+    "DriveJoint": {
+      "description": "A action to drive a single joint, optionally over a specified duration.",
+      "properties": {
+        "goal": {
+          "type": "number"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "required": [
+        "goal"
+      ],
+      "title": "Drive Joint",
+      "type": "object"
+    },
+    "DriveJointsAction": {
+      "description": "Action for driving one or more joints.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Description of the action"
+        },
+        "type": {
+          "const": "drive_joints",
+          "type": "string"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Parent action ID. If not provided, this is a root action"
+        },
+        "moves": {
+          "additionalProperties": {
+            "$ref": "#/$defs/DriveJoint"
+          },
+          "propertyNames": {},
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "moves"
+      ],
+      "title": "Drive Joints Action",
+      "type": "object"
+    },
+    "DriveJointsSubAction": {
+      "description": "Sub-action for driving one or more joints.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Description of the action"
+        },
+        "type": {
+          "const": "drive_joints",
+          "type": "string"
+        },
+        "moves": {
+          "additionalProperties": {
+            "$ref": "#/$defs/DriveJoint"
+          },
+          "propertyNames": {},
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "moves"
+      ],
+      "title": "Drive Joints Sub Action",
+      "type": "object"
+    },
+    "DummyAction": {
+      "deprecated": true,
+      "description": "Deprecated No-Op action type",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Description of the action"
+        },
+        "type": {
+          "const": "dummy",
+          "type": "string"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Parent action ID. If not provided, this is a root action"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "title": "Dummy Action",
+      "type": "object"
+    },
+    "DummySubAction": {
+      "deprecated": true,
+      "description": "Deprecated No-Op sub-action type",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Description of the action"
+        },
+        "type": {
+          "const": "dummy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "title": "Dummy Sub Action",
+      "type": "object"
+    },
+    "EndConditionPlaceholder": {
+      "properties": {},
+      "title": "End Condition",
+      "type": "object"
+    },
+    "GlobalRobotInputs": {
+      "description": "Robot details for global optimization",
+      "properties": {
+        "start_target": {
+          "description": "Start target name",
+          "type": "string"
+        },
+        "end_target": {
+          "description": "End target name",
+          "type": "string"
+        },
+        "user_defined_actuator_values": {
+          "additionalProperties": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "default": {},
+          "description": "Map of actuator name to a list of discrete actuator positions to consider in optimization",
+          "propertyNames": {},
+          "title": "Map[ActuatorName, List[ActuatorValue]]",
+          "type": "object"
+        },
+        "robot_setup": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "A path to a robot setup manifest file. Relative to the root of the export"
+        }
+      },
+      "required": [
+        "start_target",
+        "end_target"
+      ],
+      "title": "Robot Inputs",
+      "type": "object"
+    },
+    "GunJointInfo": {
+      "description": "Schedule information for a robot/preset combination",
+      "properties": {
+        "gun_joint_name": {
+          "description": "Gun joint name",
+          "type": "string"
+        },
+        "schedule_json": {
+          "description": "Schedule JSON filename (relative location)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "gun_joint_name",
+        "schedule_json"
+      ],
+      "title": "Gun Joint Info",
+      "type": "object"
+    },
+    "HybridSegment": {
+      "discriminator": {
+        "mapping": {
+          "cartesian": "#/$defs/CartesianHybridSegment",
+          "joint": "#/$defs/JointHybridSegment"
+        },
+        "propertyName": "interpolation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CartesianHybridSegment"
+        },
+        {
+          "$ref": "#/$defs/JointHybridSegment"
+        }
+      ],
+      "title": "Hybrid Segment"
+    },
+    "HybridTargetTaskInfo": {
+      "description": "Configuration for a hybrid task",
+      "properties": {
+        "target": {
+          "type": "string"
+        },
+        "on_target_commands": {
+          "items": {
+            "$ref": "#/$defs/TargetTaskOnTargetSubtask"
+          },
+          "type": "array"
+        },
+        "approach": {
+          "items": {
+            "$ref": "#/$defs/TargetTaskTransientSubtask"
+          },
+          "type": "array"
+        },
+        "retreat": {
+          "items": {
+            "$ref": "#/$defs/TargetTaskTransientSubtask"
+          },
+          "type": "array"
+        },
+        "configuration_setting": {
+          "$ref": "#/$defs/ConfigurationSetting"
+        },
+        "material_thickness": {
+          "anyOf": [
+            {
+              "type": "number"
+            }
+          ],
+          "description": "Material thickness in meters"
+        },
+        "interpolation": {
+          "const": "hybrid",
+          "type": "string"
+        },
+        "segments": {
+          "description": "List of 2 hybrid segments",
+          "items": {
+            "$ref": "#/$defs/HybridSegment"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "move_type": {
+          "const": "planning",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target",
+        "on_target_commands",
+        "approach",
+        "retreat",
+        "configuration_setting",
+        "interpolation",
+        "segments",
+        "move_type"
+      ],
+      "title": "Hybrid Target Task Info",
+      "type": "object"
+    },
+    "InterferencesPenaltyWeight": {
+      "description": "Penalty weights for robots requiring interlocks with each other",
+      "enum": [
+        "zero",
+        "low",
+        "medium",
+        "high"
+      ],
+      "title": "InterferencesPenaltyWeight",
+      "type": "string"
+    },
+    "InterlockLocations": {
+      "description": "Task interlock locations",
+      "enum": [
+        "before",
+        "after",
+        "both",
+        "none"
+      ],
+      "title": "InterlockLocations",
+      "type": "string"
+    },
+    "InterpolationType": {
+      "description": "Interpolation type for moves\\nNote: This type is duplicated for connections table",
+      "enum": [
+        "joint",
+        "cartesian"
+      ],
+      "title": "InterpolationType",
+      "type": "string"
+    },
+    "JointHybridSegment": {
+      "properties": {
+        "interpolation": {
+          "const": "joint",
+          "type": "string"
+        },
+        "speed": {
+          "$ref": "#/$defs/SpeedOverride",
+          "default": {
+            "type": "speed_override",
+            "value": 1.0
+          }
+        },
+        "switch_distance": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "interpolation",
+        "switch_distance"
+      ],
+      "title": "Joint Hybrid Segment",
+      "type": "object"
+    },
+    "JointTargetTaskInfo": {
+      "description": "Configuration for a target-based task",
+      "properties": {
+        "target": {
+          "type": "string"
+        },
+        "on_target_commands": {
+          "items": {
+            "$ref": "#/$defs/TargetTaskOnTargetSubtask"
+          },
+          "type": "array"
+        },
+        "approach": {
+          "items": {
+            "$ref": "#/$defs/TargetTaskTransientSubtask"
+          },
+          "type": "array"
+        },
+        "retreat": {
+          "items": {
+            "$ref": "#/$defs/TargetTaskTransientSubtask"
+          },
+          "type": "array"
+        },
+        "configuration_setting": {
+          "$ref": "#/$defs/ConfigurationSetting"
+        },
+        "material_thickness": {
+          "anyOf": [
+            {
+              "type": "number"
+            }
+          ],
+          "description": "Material thickness in meters"
+        },
+        "interpolation": {
+          "const": "joint",
+          "type": "string"
+        },
+        "speed": {
+          "$ref": "#/$defs/SpeedOverride",
+          "default": {
+            "type": "speed_override",
+            "value": 1.0
+          }
+        },
+        "move_type": {
+          "$ref": "#/$defs/MoveType",
+          "default": "planning"
+        }
+      },
+      "required": [
+        "target",
+        "on_target_commands",
+        "approach",
+        "retreat",
+        "configuration_setting",
+        "interpolation"
+      ],
+      "title": "Joint Target Task Info",
+      "type": "object"
+    },
+    "KeepConfiguration": {
+      "description": "Configuration settings for keeping the targets' joint configuration",
+      "properties": {
+        "type": {
+          "const": "keep_configuration",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "Keep Configuration",
+      "type": "object"
+    },
+    "MaxTcpSpeed": {
+      "description": "Max TCP Speed, in m/s",
+      "properties": {
+        "type": {
+          "const": "max_tcp_speed",
+          "type": "string"
+        },
+        "value": {
+          "description": "Max TCP Speed in m/s",
+          "exclusiveMinimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ],
+      "title": "Max Tcp Speed",
+      "type": "object"
+    },
+    "MoveType": {
+      "description": "Move type for moves",
+      "enum": [
+        "direct",
+        "planning"
+      ],
+      "title": "MoveType",
+      "type": "string"
+    },
+    "NoOpAction": {
+      "description": "No-Op action type",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Description of the action"
+        },
+        "type": {
+          "const": "noop",
+          "type": "string"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Parent action ID. If not provided, this is a root action"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "title": "No Op Action",
+      "type": "object"
+    },
+    "NoOpSubAction": {
+      "description": "No-Op sub-action type",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Description of the action"
+        },
+        "type": {
+          "const": "noop",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "title": "No Op Sub Action",
+      "type": "object"
+    },
+    "OperationAction": {
+      "description": "Action for grouping and sequencing other actions",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Description of the action"
+        },
+        "type": {
+          "const": "operation",
+          "type": "string"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Parent action ID. If not provided, this is a root action"
+        },
+        "children": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "on_enter": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/OperationActionSubCommand"
+          },
+          "type": "array"
+        },
+        "on_end": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/OperationActionSubCommand"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "title": "Operation Action",
+      "type": "object"
+    },
+    "OperationActionSubCommand": {
+      "description": "Operation Action Sub-Task",
+      "discriminator": {
+        "mapping": {
+          "drive_joints": "#/$defs/DriveJointsSubAction",
+          "dummy": "#/$defs/DummySubAction",
+          "noop": "#/$defs/NoOpSubAction",
+          "update_workcell": "#/$defs/UpdateWorkcellSubAction",
+          "wait": "#/$defs/WaitSubAction",
+          "wait_joints": "#/$defs/WaitJointsSubAction"
+        },
+        "propertyName": "type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/UpdateWorkcellSubAction"
+        },
+        {
+          "$ref": "#/$defs/WaitSubAction"
+        },
+        {
+          "$ref": "#/$defs/NoOpSubAction"
+        },
+        {
+          "$ref": "#/$defs/DummySubAction"
+        },
+        {
+          "$ref": "#/$defs/DriveJointsSubAction"
+        },
+        {
+          "$ref": "#/$defs/WaitJointsSubAction"
+        }
+      ],
+      "title": "Action Sub Command"
+    },
+    "OperationsQuery": {
+      "description": "Main query definition for Operations",
+      "properties": {
+        "use_homes_as_obstacles": {
+          "default": false,
+          "description": "Use this setting to ensure that the motions of each Robot do not intersect with the home configuration of the other Robots. This option is disabled for single-robot optimizations.",
+          "type": "boolean"
+        },
+        "enable_smoothing": {
+          "default": false,
+          "description": "Use this setting to allow via points to use a non-zero smoothing radius",
+          "type": "boolean"
+        },
+        "seed": {
+          "default": 0,
+          "description": "Seed for random number generator. The optimization could potentially return different results using different seeds.",
+          "type": "integer"
+        },
+        "smoothing_tables": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "$ref": "#/$defs/SmoothingTableRadius"
+              },
+              {
+                "$ref": "#/$defs/SmoothingTablePercentage"
+              }
+            ],
+            "description": "Smoothing table: a legacy list of floats (meters), `{type: 'meters', values: [...]}`, or `{type: 'percentage', values: [...]}`"
+          },
+          "default": {},
+          "description": "List of supported smoothing values for each robot",
+          "propertyNames": {},
+          "title": "Map[Robot, SmoothingTable]",
+          "type": "object"
+        },
+        "initial_mate_states": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "description": "Initial mate states",
+          "propertyNames": {},
+          "title": "Map[Mate, State]",
+          "type": "object"
+        },
+        "initial_independent_joint_values": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "default": {},
+          "description": "Map of independent actuator name to initial actuator position",
+          "propertyNames": {},
+          "title": "Map[ActuatorName, ActuatorValue]",
+          "type": "object"
+        },
+        "precedence_constraints": {
+          "additionalProperties": {
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Constraint"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "type": "array"
+          },
+          "default": {},
+          "description": "Map of action ids to list of action ids that must be completed before this action can start/be moved to",
+          "title": "Precedence Constraints",
+          "type": "object"
+        },
+        "interferences_penalty_weight": {
+          "$ref": "#/$defs/InterferencesPenaltyWeight",
+          "default": "medium"
+        },
+        "weld_schedules": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "additionalProperties": {
+                  "$ref": "#/$defs/GunJointInfo"
+                },
+                "propertyNames": {},
+                "type": "object"
+              },
+              "propertyNames": {},
+              "type": "object"
+            }
+          ],
+          "description": "Map of robot Ids to preset Ids to gun joint name & path to a schedule file"
+        },
+        "optimize_end_conditions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OptimizeEndConditions"
+            }
+          ],
+          "description": "Optimize engine stop policy."
+        },
+        "robots": {
+          "additionalProperties": {
+            "$ref": "#/$defs/GlobalRobotInputs"
+          },
+          "description": "Robots for the operation",
+          "propertyNames": {},
+          "title": "Map[Robot, GlobalRobotInputs]",
+          "type": "object"
+        },
+        "actions": {
+          "additionalProperties": {
+            "$ref": "#/$defs/OperationsQueryAction"
+          },
+          "description": "Actions for the operation",
+          "title": "Map[OperationName, Union[DriveJointsAction, NoOpAction, OperationAction, TargetAction, UpdateWorkcellAction, WaitAction, WaitJointsAction]]",
+          "type": "object"
+        }
+      },
+      "required": [
+        "robots",
+        "actions"
+      ],
+      "title": "Operations Query Details",
+      "type": "object"
+    },
+    "OperationsQueryAction": {
+      "description": "Operation Action Top-Level Task",
+      "discriminator": {
+        "mapping": {
+          "drive_joints": "#/$defs/DriveJointsAction",
+          "dummy": "#/$defs/DummyAction",
+          "noop": "#/$defs/NoOpAction",
+          "operation": "#/$defs/OperationAction",
+          "target": "#/$defs/TargetAction",
+          "update_workcell": "#/$defs/UpdateWorkcellAction",
+          "wait": "#/$defs/WaitAction",
+          "wait_joints": "#/$defs/WaitJointsAction"
+        },
+        "propertyName": "type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DriveJointsAction"
+        },
+        {
+          "$ref": "#/$defs/NoOpAction"
+        },
+        {
+          "$ref": "#/$defs/OperationAction"
+        },
+        {
+          "$ref": "#/$defs/TargetAction"
+        },
+        {
+          "$ref": "#/$defs/UpdateWorkcellAction"
+        },
+        {
+          "$ref": "#/$defs/WaitAction"
+        },
+        {
+          "$ref": "#/$defs/WaitJointsAction"
+        },
+        {
+          "$ref": "#/$defs/DummyAction"
+        }
+      ],
+      "title": "Query Actions"
+    },
+    "OptimizeConfiguration": {
+      "description": "Configuration settings for optimizing the configuration",
+      "properties": {
+        "type": {
+          "const": "optimize_configuration",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "Optimize Configuration",
+      "type": "object"
+    },
+    "OptimizeEndConditions": {
+      "description": "Engine stop policy: target stage and/or elapsed time limit.\\n\\nAt least one of stage or elapsed_time must be set.\\nmax_cycle_time is optional and only allowed when stage is minimum_result.",
+      "properties": {
+        "stage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OptimizeStage"
+            }
+          ],
+          "description": "Target optimization pipeline stage"
+        },
+        "max_cycle_time": {
+          "anyOf": [
+            {
+              "description": "Duration in seconds",
+              "exclusiveMinimum": 0,
+              "type": "number"
+            }
+          ],
+          "description": "Require best solution cycle time to be at most this value (seconds). Only evaluated when stage is minimum_result."
+        },
+        "elapsed_time": {
+          "anyOf": [
+            {
+              "description": "Duration in seconds",
+              "exclusiveMinimum": 0,
+              "type": "number"
+            }
+          ],
+          "description": "Stop optimization after this many seconds have elapsed"
+        }
+      },
+      "title": "Optimize End Conditions",
+      "type": "object"
+    },
+    "OptimizeStage": {
+      "description": "Optimization pipeline stages.",
+      "enum": [
+        "feasibility",
+        "minimum_result",
+        "convergence"
+      ],
+      "title": "OptimizeStage",
+      "type": "string"
+    },
+    "OptimizeToolRx": {
+      "description": "Configuration settings for optimizing tool rotation around X axis",
+      "properties": {
+        "type": {
+          "const": "optimize_tool_rx",
+          "type": "string"
+        },
+        "allow_flip": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "Optimize Tool Rx",
+      "type": "object"
+    },
+    "OptimizeToolRy": {
+      "description": "Configuration settings for optimizing tool rotation around Y axis",
+      "properties": {
+        "type": {
+          "const": "optimize_tool_ry",
+          "type": "string"
+        },
+        "allow_flip": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "Optimize Tool Ry",
+      "type": "object"
+    },
+    "OptimizeToolRz": {
+      "description": "Configuration settings for optimizing tool rotation around Z axis",
+      "properties": {
+        "type": {
+          "const": "optimize_tool_rz",
+          "type": "string"
+        },
+        "allow_flip": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "Optimize Tool Rz",
+      "type": "object"
+    },
+    "OptimizeToolWithinBox": {
+      "description": "Configuration settings for optimizing the tool position within a box",
+      "properties": {
+        "type": {
+          "const": "optimize_tool_within_box",
+          "type": "string"
+        },
+        "min_point": {
+          "$ref": "#/$defs/Point",
+          "description": "Minimum point of the box"
+        },
+        "max_point": {
+          "$ref": "#/$defs/Point",
+          "description": "Maximum point of the box"
+        }
+      },
+      "required": [
+        "type",
+        "min_point",
+        "max_point"
+      ],
+      "title": "Optimize Tool Within Box",
+      "type": "object"
+    },
+    "Point": {
+      "description": "3D point coordinates in meters",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "title": "Point",
+      "type": "object"
+    },
+    "Pose": {
+      "description": "Describes a pose in 3D space",
+      "properties": {
+        "xyz": {
+          "description": "Position in x, y, z directions",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "title": "Array3f",
+          "type": "array"
+        },
+        "rpy": {
+          "description": "Orientation in roll, pitch, yaw directions",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "title": "Array3f",
+          "type": "array"
+        }
+      },
+      "required": [
+        "xyz",
+        "rpy"
+      ],
+      "title": "Pose",
+      "type": "object"
+    },
+    "PoseOffset": {
+      "description": "Describes a relative pose offset",
+      "properties": {
+        "type": {
+          "const": "pose_offset",
+          "type": "string"
+        },
+        "offset": {
+          "$ref": "#/$defs/Pose",
+          "description": "Offset from the current pose"
+        },
+        "external_actuator_values": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "default": {},
+          "description": "External Actuator values to use at this pose",
+          "propertyNames": {},
+          "title": "Map[ActuatorName, ActuatorValue]",
+          "type": "object"
+        }
+      },
+      "required": [
+        "type",
+        "offset"
+      ],
+      "title": "Pose Offset",
+      "type": "object"
+    },
+    "SmoothingPercentage": {
+      "additionalProperties": false,
+      "description": "Smoothing as a percentage (0-100).",
+      "properties": {
+        "type": {
+          "const": "percentage",
+          "type": "string"
+        },
+        "value": {
+          "description": "Smoothing percentage (1-100, where 100 = maximum smoothing)",
+          "exclusiveMinimum": 0,
+          "maximum": 100,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ],
+      "title": "Smoothing Percentage",
+      "type": "object"
+    },
+    "SmoothingRadius": {
+      "additionalProperties": false,
+      "description": "Smoothing as a radius in meters.",
+      "properties": {
+        "type": {
+          "const": "meters",
+          "type": "string"
+        },
+        "value": {
+          "description": "Smoothing radius in meters",
+          "exclusiveMinimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ],
+      "title": "Smoothing Radius",
+      "type": "object"
+    },
+    "SmoothingTablePercentage": {
+      "additionalProperties": false,
+      "description": "Smoothing table with values as percentages.",
+      "properties": {
+        "type": {
+          "const": "percentage",
+          "type": "string"
+        },
+        "values": {
+          "description": "Smoothing percentages (1-100)",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "type",
+        "values"
+      ],
+      "title": "Smoothing Table Percentage",
+      "type": "object"
+    },
+    "SmoothingTableRadius": {
+      "additionalProperties": false,
+      "description": "Smoothing table with values in meters.",
+      "properties": {
+        "type": {
+          "const": "meters",
+          "type": "string"
+        },
+        "values": {
+          "description": "Smoothing radii in meters",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "type",
+        "values"
+      ],
+      "title": "Smoothing Table Radius",
+      "type": "object"
+    },
+    "SmoothingUnsmoothed": {
+      "additionalProperties": false,
+      "description": "No smoothing (exact stop).",
+      "properties": {
+        "type": {
+          "const": "unsmoothed",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "Smoothing Unsmoothed",
+      "type": "object"
+    },
+    "SpeedOverride": {
+      "description": "Speed override as a float percent (0-1.0)",
+      "properties": {
+        "type": {
+          "const": "speed_override",
+          "type": "string"
+        },
+        "value": {
+          "exclusiveMinimum": 0,
+          "maximum": 1.0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ],
+      "title": "Speed Override",
+      "type": "object"
+    },
+    "SubtaskInputPoint": {
+      "description": "Describes a relative pose move to execute on approaching to the target or retreating from it",
+      "properties": {
+        "point": {
+          "$ref": "#/$defs/PoseOffset",
+          "description": "Pose offset relative to the target"
+        },
+        "interpolation": {
+          "$ref": "#/$defs/InterpolationType",
+          "description": "Interpolation type for the move from the approaching point or to the retreating point"
+        },
+        "speed_setting": {
+          "default": {
+            "type": "speed_override",
+            "value": 1.0
+          },
+          "description": "Target speed type",
+          "discriminator": {
+            "mapping": {
+              "max_tcp_speed": "#/$defs/MaxTcpSpeed",
+              "speed_override": "#/$defs/SpeedOverride"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/SpeedOverride"
+            },
+            {
+              "$ref": "#/$defs/MaxTcpSpeed"
+            }
+          ]
+        },
+        "smoothing": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/$defs/SmoothingUnsmoothed"
+            },
+            {
+              "$ref": "#/$defs/SmoothingPercentage"
+            },
+            {
+              "$ref": "#/$defs/SmoothingRadius"
+            }
+          ],
+          "default": {
+            "type": "unsmoothed"
+          },
+          "description": "Smoothing at the approach or retreat point: `{type: 'percentage', value: 0-100}` or `{type: 'meters', value: meters}`. Ignored if direct move is not the first or last action"
+        }
+      },
+      "required": [
+        "point",
+        "interpolation"
+      ],
+      "title": "Subtask Input Point",
+      "type": "object"
+    },
+    "TargetAction": {
+      "description": "Action for Target-Based operations",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Description of the action"
+        },
+        "type": {
+          "const": "target",
+          "type": "string"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Parent action ID. If not provided, this is a root action"
+        },
+        "task": {
+          "$ref": "#/$defs/TargetTaskInfo"
+        },
+        "task_motion_presets": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "description": "Allowed Robot States. This defines the active preset of the robot during the motion to this task.",
+          "propertyNames": {},
+          "title": "Map[Robot, Preset]",
+          "type": "object"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TargetActionCategory"
+            }
+          ],
+          "description": "Optional Target Category for organizing actions"
+        },
+        "share": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Shared ID to allow re-allocation of the action to a different robot"
+        },
+        "interlock_locations": {
+          "$ref": "#/$defs/InterlockLocations",
+          "default": "both"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "task"
+      ],
+      "title": "Target Action",
+      "type": "object"
+    },
+    "TargetActionCategory": {
+      "description": "Categories for TargetActions",
+      "enum": [
+        "via",
+        "spot",
+        "path",
+        "drill"
+      ],
+      "title": "TargetActionCategory",
+      "type": "string"
+    },
+    "TargetTaskInfo": {
+      "description": "Target Task: OneOf[CartesianTargetTaskInfo, JointTargetTaskInfo, HybridTargetTaskInfo]",
+      "discriminator": {
+        "mapping": {
+          "cartesian": "#/$defs/CartesianTargetTaskInfo",
+          "hybrid": "#/$defs/HybridTargetTaskInfo",
+          "joint": "#/$defs/JointTargetTaskInfo"
+        },
+        "propertyName": "interpolation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CartesianTargetTaskInfo"
+        },
+        {
+          "$ref": "#/$defs/JointTargetTaskInfo"
+        },
+        {
+          "$ref": "#/$defs/HybridTargetTaskInfo"
+        }
+      ],
+      "title": "Target Task"
+    },
+    "TargetTaskOnTargetSubtask": {
+      "description": "On-Target Sub-Task: OneOf[UpdateWorkcell, Wait, Dummy]",
+      "discriminator": {
+        "mapping": {
+          "drive_joints": "#/$defs/DriveJointsSubAction",
+          "dummy": "#/$defs/DummySubAction",
+          "noop": "#/$defs/NoOpSubAction",
+          "update_workcell": "#/$defs/UpdateWorkcellSubAction",
+          "wait": "#/$defs/WaitSubAction",
+          "wait_joints": "#/$defs/WaitJointsSubAction"
+        },
+        "propertyName": "type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/UpdateWorkcellSubAction"
+        },
+        {
+          "$ref": "#/$defs/WaitSubAction"
+        },
+        {
+          "$ref": "#/$defs/DriveJointsSubAction"
+        },
+        {
+          "$ref": "#/$defs/WaitJointsSubAction"
+        },
+        {
+          "$ref": "#/$defs/NoOpSubAction"
+        },
+        {
+          "$ref": "#/$defs/DummySubAction"
+        }
+      ],
+      "title": "On-Target Command"
+    },
+    "TargetTaskTransientSubtask": {
+      "description": "Approach or Retreat Sub-Task: OneOf[UpdateWorkcell, Wait, DirectMotion, DriveJointsSubAction,\\n            WaitJointsSubAction Dummy]",
+      "discriminator": {
+        "mapping": {
+          "direct_move": "#/$defs/DirectMotionSubAction",
+          "drive_joints": "#/$defs/DriveJointsSubAction",
+          "dummy": "#/$defs/DummySubAction",
+          "noop": "#/$defs/NoOpSubAction",
+          "update_workcell": "#/$defs/UpdateWorkcellSubAction",
+          "wait": "#/$defs/WaitSubAction",
+          "wait_joints": "#/$defs/WaitJointsSubAction"
+        },
+        "propertyName": "type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/UpdateWorkcellSubAction"
+        },
+        {
+          "$ref": "#/$defs/WaitSubAction"
+        },
+        {
+          "$ref": "#/$defs/DirectMotionSubAction"
+        },
+        {
+          "$ref": "#/$defs/DriveJointsSubAction"
+        },
+        {
+          "$ref": "#/$defs/WaitJointsSubAction"
+        },
+        {
+          "$ref": "#/$defs/NoOpSubAction"
+        },
+        {
+          "$ref": "#/$defs/DummySubAction"
+        }
+      ],
+      "title": "Transient Sub Task"
+    },
+    "TimeConvergenceEndCondition": {
+      "description": "End condition based on relative improvement in time",
+      "properties": {
+        "type": {
+          "const": "time_convergence",
+          "type": "string"
+        },
+        "time_threshold": {
+          "comment": "5 minutes to 100 hours",
+          "description": "Time threshold in seconds",
+          "exclusiveMinimum": 0,
+          "maximum": 360000,
+          "minimum": 300,
+          "type": "number"
+        },
+        "improvement_threshold": {
+          "description": "Improvement threshold",
+          "maximum": 10.0,
+          "minimum": 0.001,
+          "type": "number"
+        }
+      },
+      "required": [
+        "type",
+        "time_threshold",
+        "improvement_threshold"
+      ],
+      "title": "Time Convergence",
+      "type": "object"
+    },
+    "TimeElapsedEndCondition": {
+      "description": "End condition based on maximum time elapsed",
+      "properties": {
+        "type": {
+          "const": "time_elapsed",
+          "type": "string"
+        },
+        "time_threshold": {
+          "comment": "5 minutes to 200 hours",
+          "description": "Time threshold in seconds",
+          "exclusiveMinimum": 0,
+          "maximum": 720000,
+          "minimum": 300,
+          "type": "number"
+        }
+      },
+      "required": [
+        "type",
+        "time_threshold"
+      ],
+      "title": "Time Elapsed",
+      "type": "object"
+    },
+    "UpdateWorkcellAction": {
+      "description": "Action for updating workcell state",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Description of the action"
+        },
+        "type": {
+          "const": "update_workcell",
+          "type": "string"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Parent action ID. If not provided, this is a root action"
+        },
+        "states": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "description": "Mate state changes",
+          "propertyNames": {},
+          "title": "Map[Mate, State]",
+          "type": "object"
+        },
+        "presets": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "description": "Robot Preset changes",
+          "propertyNames": {},
+          "title": "Map[Robot, Preset]",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "title": "Update Workcell Action",
+      "type": "object"
+    },
+    "UpdateWorkcellSubAction": {
+      "description": "Sub-Action for updating workcell state",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Description of the action"
+        },
+        "type": {
+          "const": "update_workcell",
+          "type": "string"
+        },
+        "states": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "description": "Mate state changes",
+          "propertyNames": {},
+          "title": "Map[Mate, State]",
+          "type": "object"
+        },
+        "presets": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "description": "Robot Preset changes",
+          "propertyNames": {},
+          "title": "Map[Robot, Preset]",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "title": "Update Workcell Sub Action",
+      "type": "object"
+    },
+    "WaitAction": {
+      "description": "Action for implementing timed waits",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Description of the action"
+        },
+        "type": {
+          "const": "wait",
+          "type": "string"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Parent action ID. If not provided, this is a root action"
+        },
+        "duration": {
+          "default": 0,
+          "description": "Pause in execution for specified duration (seconds)",
+          "maximum": 1000,
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "title": "Wait Action",
+      "type": "object"
+    },
+    "WaitJointsAction": {
+      "description": "Action for waiting until one or more joints have completed motion.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Description of the action"
+        },
+        "type": {
+          "const": "wait_joints",
+          "type": "string"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Parent action ID. If not provided, this is a root action"
+        },
+        "joints": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "propertyNames": {},
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "joints"
+      ],
+      "title": "Wait Joints Action",
+      "type": "object"
+    },
+    "WaitJointsSubAction": {
+      "description": "Sub-action for waiting until one or more joints have completed motion.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Description of the action"
+        },
+        "type": {
+          "const": "wait_joints",
+          "type": "string"
+        },
+        "joints": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "propertyNames": {},
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "joints"
+      ],
+      "title": "Wait Joints Sub Action",
+      "type": "object"
+    },
+    "WaitSubAction": {
+      "description": "Sub-Action for implementing timed waits",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Description of the action"
+        },
+        "type": {
+          "const": "wait",
+          "type": "string"
+        },
+        "duration": {
+          "default": 0,
+          "description": "Pause in execution for specified duration (seconds)",
+          "maximum": 1000,
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "title": "Wait Sub Action",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "query_type": {
+      "const": "operations",
+      "type": "string"
+    },
+    "version": {
+      "description": "Query API version",
+      "pattern": "^(0|[1-9]\\\\d*)(?:\\\\.(0|[1-9]\\\\d*))?(?:\\\\.(0|[1-9]\\\\d*))?$",
+      "type": "string"
+    },
+    "query": {
+      "$ref": "#/$defs/OperationsQuery"
+    },
+    "end_condition": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DocEndCondition"
+        }
+      ]
+    }
+  },
+  "required": [
+    "query_type",
+    "version",
+    "query"
+  ],
+  "title": "Operations Query",
+  "type": "object"
+}

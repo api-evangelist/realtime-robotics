@@ -1,0 +1,145 @@
+generated: '2026-08-26'
+method: searched
+source: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs
+name: Realtime Robotics standards conformance
+description: >-
+  Cross-cutting and domain standards Realtime Robotics' own contracts and documentation
+  declare. The interesting result here is where the standards live: there is no OpenAPI,
+  no JSON:API and no RFC 9457, but the products declare a dense stack of INDUSTRIAL
+  interoperability standards - PROFINET, CC-Link IE Field Basic, IEC 61131-3 PLC
+  libraries, AprilTag fiducials and the ISO CAD interchange formats - which is the
+  standards surface that actually matters for a robot-cell integrator.
+entries:
+- id: oauth2
+  conforms: true
+  scope: realtime-robotics:resolver-cloud
+  evidence: >-
+    clerk.rtr.ai publishes an RFC 8414 authorization-server metadata document declaring
+    authorization_code and refresh_token grants, code response type and S256 PKCE.
+  url: https://clerk.rtr.ai/.well-known/oauth-authorization-server
+- id: oidc
+  conforms: true
+  scope: realtime-robotics:resolver-cloud
+  evidence: >-
+    OpenID Connect discovery document served at the issuer https://clerk.rtr.ai with
+    jwks_uri, userinfo_endpoint, RS256 id_token signing and the standard claim set.
+  url: https://clerk.rtr.ai/.well-known/openid-configuration
+- id: rfc7517-jwks
+  conforms: true
+  scope: realtime-robotics:resolver-cloud
+  evidence: JWKS served at https://clerk.rtr.ai/.well-known/jwks.json
+- id: json-schema
+  conforms: true
+  scope: realtime-robotics:resolver-cloud
+  evidence: >-
+    The Resolver Operations Query (queries.json) is specified as a JSON Schema with 63
+    $defs. It uses $defs/const, so it is 2019-09 or later, but it declares no $schema
+    keyword, so the dialect is inferred rather than stated.
+  url: https://resolver.rtr.ai/docs/api/data/operations_query/
+- id: rfc9457
+  conforms: false
+  evidence: >-
+    No application/problem+json is used anywhere. The ASCII API defines its own
+    error {code, msg} envelope; RapidSense returns bare HTTP status codes with
+    endpoint-specific JSON bodies.
+- id: pagination
+  conforms: false
+  evidence: No documented collection on any surface is paginated.
+- id: idempotency
+  conforms: partial
+  evidence: >-
+    RapidSense documents PUT as a full-replacement idempotent update on a caller-supplied
+    id; there is no Idempotency-Key mechanism and the ASCII API's Move surface is
+    sequence-numbered rather than idempotent. See conventions/.
+- id: openapi
+  conforms: false
+  evidence: >-
+    No OpenAPI/Swagger document is published on any host. Probed rtr.ai,
+    resolver.rtr.ai, app.resolver.rtr.ai, app-eu.resolver.rtr.ai and the documented
+    controller ports for /openapi.json, /openapi.yaml, /swagger.json, /api-docs and
+    /docs. The Resolver docs state directly that the public REST API is "currently under
+    development and not yet publicly available".
+- id: asyncapi
+  conforms: false
+  evidence: No AsyncAPI, event catalog or webhook surface is published.
+- id: graphql
+  conforms: false
+  evidence: No /graphql endpoint on any host (404 on both application hosts).
+domain_standards:
+- id: profinet
+  body: PROFIBUS & PROFINET International (PI)
+  conforms: true
+  scope: realtime-robotics:rapidplan-ascii-api
+  evidence: >-
+    The RapidPlan Controller ships a documented PROFINET fieldbus interface with a
+    versioned IO mapping and a generated lookup table, documented per release as the
+    "RapidPlan Controller Profinet Interface User Guide" (2.3 through 2.9), plus a
+    dedicated setup page for enabling PROFINET on a controller.
+  spec_location: >-
+    RapidPlan Controller Profinet Interface User Guide - command module IO mapping
+    (Activate/Deactivate, SetAltLocation, SetINT, SetMaxLinearAccel, SetMaxLinearSpeed,
+    IsOnTarget, Checksum, DSM Add/RemoveBox, Add/RemoveFrame, Add/RemoveObject,
+    Reparent, UpdateFrame)
+  url: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120939/2.9+RapidPlan+Controller+Profinet+Interface+User+Guide
+- id: cc-link-ie-field-basic
+  body: CC-Link Partner Association (CLPA)
+  conforms: true
+  scope: realtime-robotics:rapidplan-ascii-api
+  evidence: >-
+    RapidPlan 2.10.1 introduced a CC-Link IE Field Basic interface with its own
+    introduction and installation guide.
+  url: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3566114287/2.10.1+CC-Link+IEF+Basic+Interface+Introduction+and+Installation+Guide
+- id: iec-61131-3
+  body: IEC
+  conforms: true
+  scope: realtime-robotics:rapidplan-ascii-api
+  evidence: >-
+    A first-party CODESYS SoftPLC library ("RTR Controller Library") is published in the
+    RealtimeExamples repository and documented as a Task Manager option, alongside a
+    PLC library for Siemens PLC integration over PROFINET.
+  url: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/1503002905/Using+the+Codesys+SoftPLC+as+Task+Manager
+- id: apriltag-36h11
+  body: AprilTag (University of Michigan)
+  conforms: true
+  scope: realtime-robotics:rapidsense-api
+  evidence: >-
+    The RapidSense /markers resource is specified against the 36h11 tag family - a marker
+    id outside that family is rejected with 422 Unprocessable Content.
+  url: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120157/2.9+RapidSense+API
+- id: cad-interchange
+  body: ISO / consortium CAD formats
+  conforms: true
+  scope: realtime-robotics:resolver-cloud
+  evidence: >-
+    The Resolver project.yaml specification declares supported CAD interchange formats:
+    JT (ISO 14306), STEP (ISO 10303), IGES, STL, Collada, IFC, VRML, X3D, 3MF, ACIS,
+    Parasolid, Rhino, U3D, FBX and OBJ - with JT recommended.
+  url: https://resolver.rtr.ai/docs/api/data/yaml_specification/
+- id: yaml-1.2
+  body: YAML
+  conforms: true
+  scope: realtime-robotics:rapidplan-ascii-api
+  evidence: >-
+    The ASCII API wire format is explicitly specified as inline YAML 1.2, and the
+    reference calls out the YAML 1.2 whitespace-after-colon rule as a formation
+    requirement.
+  url: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120890/2.9+Realtime+Robotics+RapidPlan+ASCII+API
+- id: urdf
+  conforms: unknown
+  evidence: >-
+    The company's GitHub organisation carries a fork of urdfdom (archived 2019) and the
+    Resolver project.yaml uses an equivalent link/joint/limit kinematic model, but no
+    document declares URDF as a supported interchange format, so this is not asserted.
+compliance:
+  certifications_published: false
+  evidence: >-
+    No SOC 2, ISO 27001, PCI, HIPAA or FedRAMP claim appears on rtr.ai, resolver.rtr.ai
+    or any probed trust/security path. The privacy policy discusses GDPR and CCPA rights
+    only. No Compliance pointer is emitted, because none is earned.
+  privacy_regimes_referenced:
+  - GDPR
+  - CCPA
+  data_residency: >-
+    Resolver is offered in two regions - a global application and a separate Europe
+    application (app-eu.resolver.rtr.ai) - which is a residency posture, not a
+    certification.

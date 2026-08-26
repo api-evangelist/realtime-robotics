@@ -1,0 +1,43 @@
+generated: '2026-08-26'
+method: searched
+source: https://resolver.rtr.ai/docs/api/data/operations_query/
+name: Realtime Robotics published JSON Schemas
+description: >-
+  Machine-readable schemas Realtime Robotics publishes for the Resolver Cloud data
+  contracts. Realtime Robotics publishes no OpenAPI, AsyncAPI, gRPC/Protobuf or WSDL
+  contract for any of its three API surfaces; this Operations Query schema is the only
+  formal machine-readable contract found on any host the company controls.
+schemas:
+- file: json-schema/realtime-robotics-operations-query.schema.json
+  title: Operations Query
+  applies_to: queries.json
+  api: realtime-robotics:resolver-cloud
+  dialect_declared: false
+  dialect_inferred: JSON Schema 2019-09 or later
+  dialect_evidence: uses $defs and const; no $schema keyword is declared
+  defs: 63
+  required:
+  - query_type
+  - version
+  - query
+  source_page: https://resolver.rtr.ai/docs/api/data/operations_query/
+  extraction: >-
+    The docs page renders this schema client-side through a Docusaurus JSON-schema
+    viewer; the schema itself ships verbatim inside the page's own route bundle at
+    https://resolver.rtr.ai/assets/js/5507.1d957fd5.js as a JSON.parse() literal. The
+    literal was parsed and written out pretty-printed. No content was added, removed
+    or renamed.
+  x-evidence:
+    fetched: '2026-08-26'
+    url: https://resolver.rtr.ai/assets/js/5507.1d957fd5.js
+    http_status: 200
+- title: project.yaml
+  applies_to: project.yaml
+  api: realtime-robotics:resolver-cloud
+  file: null
+  note: >-
+    project.yaml (rtr_yaml_version 4.2.0) is specified in prose, YAML fragments and
+    tables at https://resolver.rtr.ai/docs/api/data/yaml_specification/ - no JSON Schema,
+    XSD or other machine-readable schema is published for it. Recorded as an honest
+    gap; nothing was authored on the provider's behalf.
+  source_page: https://resolver.rtr.ai/docs/api/data/yaml_specification/

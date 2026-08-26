@@ -1,0 +1,108 @@
+generated: '2026-08-26'
+method: searched
+source: https://resolver.rtr.ai/blog
+name: Realtime Robotics change log
+description: >-
+  Realtime Robotics publishes two dated change surfaces: a release blog for Resolver
+  (34 posts, 2024-10-31 to 2026-08-24, with RSS and Atom feeds) and per-version release
+  notes pages inside the RapidPlan documentation space. Both are genuinely dated and
+  itemised into NEW/changed/known-issue entries; neither is machine-readable beyond the
+  blog feeds.
+surfaces:
+- name: Resolver release blog
+  url: https://resolver.rtr.ai/blog
+  scheme: calendar versioning (YYYY.MM.DD)
+  cadence: roughly every two to four weeks
+  first_entry: '2024-10-31'
+  latest_entry: '2026-08-24'
+  entry_count: 34
+  feeds:
+  - https://resolver.rtr.ai/blog/rss.xml
+  - https://resolver.rtr.ai/blog/atom.xml
+  archive: https://resolver.rtr.ai/blog/archive
+- name: RapidPlan release notes
+  url: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs
+  scheme: product version (2.x)
+  machine_readable: false
+recent_entries:
+- version: '2026.08.24'
+  date: '2026-08-24'
+  product: Resolver
+  url: https://resolver.rtr.ai/blog/2026/08/24/2026-08-24/
+  breaking: false
+  additions:
+  - Support for the CallPath OLP command, which previously caused export to fail.
+  - Clearance Mode selection in the Resolver UI (feature-gated) replacing a fixed default.
+  - Support for Process Simulate 2606.
+  - Redesigned Resolver location dialog with owner-scoped deletion and clearer errors.
+  - '"Report Feedback to Support" dialog with optional project/study data sharing, 2GB cap,
+    and a copyable Study ID.'
+  components:
+    process_simulate_connector: 1.26.0
+    visual_components_connector: 1.22.0
+    melsoft_gemini_connector: 1.22.0
+- version: '2026.08.12'
+  date: '2026-08-12'
+  product: Resolver
+  url: https://resolver.rtr.ai/blog/2026/08/12/2026-08-12/
+- version: '2026.07.09'
+  date: '2026-07-09'
+  product: Resolver
+  url: https://resolver.rtr.ai/blog/2026/07/09/2026-07-09/
+- version: '2026.06.24'
+  date: '2026-06-24'
+  product: Resolver
+  url: https://resolver.rtr.ai/blog/2026/06/24/2026-06-24/
+- version: '2026.06.11'
+  date: '2026-06-11'
+  product: Resolver
+  url: https://resolver.rtr.ai/blog/2026/06/11/2026-06-11/
+- version: 2.10.1
+  date: '2024-12-09'
+  product: RapidPlan
+  url: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3566114147/RapidPlan+2.10.1+Release+Notes
+  breaking: false
+  additions:
+  - CC-Link IE Field Basic interface.
+  - Inter-group Auto Connect configuration in RPCreate and the RPCreate REST API.
+  - Download of RapidPlan logs is no longer allowed in Operation Mode.
+  fixes:
+  - Occasional linear move failures on 5-axis robots (Fanuc M410).
+- version: '2.9'
+  date: '2024-10-01'
+  product: RapidPlan
+  url: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467116725/RapidPlan+2.9+Release+Notes
+  breaking: false
+  additions:
+  - Native control for Fanuc and ABB robots.
+  - RPCreate REST API for automating editing tasks in RapidPlan Create.
+  - New PROFINET command module IO mapping (SetMaxLinearAccel, SetMaxLinearSpeed,
+    IsOnTarget with per-joint-type epsilon, Checksum, DSM Add/Remove/Reparent/UpdateFrame).
+  - 'ASCII API: offset argument on Reparent, collision_check_rapidsense on Move,
+    clarified HoldMove/ResumeMove, updated epsilon_lin and epsilon_rot on IsOnTarget.'
+  known_issues:
+  - CancelMove error 7005 on paths with many edges (RAPID-50487).
+  - ABB ERROR_ON_SPLINE_WATCHDOG_ERROR deviation of up to 4 cm on large low-accuracy motions.
+ascii_api_revision_history:
+- version: '2.9'
+  changes:
+  - Added offset argument to Reparent.
+  - Added collision_check_rapidsense argument to Move.
+  - Clarified HoldMove and ResumeMove.
+  - Updated epsilon_lin and epsilon_rot on IsOnTarget.
+- version: '2.8'
+  changes:
+  - Updated send condition for SetMaxLinearAcceleration and SetMaxLinearSpeed.
+  - Planning move to a joint configuration is supported.
+- version: '2.7'
+  changes:
+  - 2024-01-17 added revert_to_roadmap option to Move.
+  - 2024-02-08 clarified that the Move Costs sum is not constrained by the API.
+  - 2024-03-04 clarified the SetAlternateLocation timeout parameter.
+- version: '2.6'
+  changes:
+  - 2023-11-14 added IsOnTarget.
+  - 2023-11-29 REMOVED MultiRobotMove.
+  - 2023-11-29 added roadmap + planning moves to joint configurations.
+  - 2023-11-29 added Move roadmap_mode parameter.
+  - 2023-11-29 added the route Move goal type.

@@ -1,0 +1,28 @@
+generated: '2026-08-26'
+method: searched
+source: https://rtr.ai/demo/
+name: Realtime Robotics plans and pricing
+description: >-
+  Realtime Robotics publishes no pricing of any kind. There is no /pricing page on
+  rtr.ai (probed, 404), no plan or tier table on the Resolver product page, no pricing
+  section in the Resolver or RapidPlan documentation, and no self-service checkout.
+  Both routes into the product are sales-mediated: "Try Resolver for Free" leads to a
+  demo request form, and Resolver Cloud accounts are explicitly not self-service - the
+  documentation states an account must be requested with a corporate email address and
+  is then created by Realtime Robotics.
+plan_count: 0
+pricing_model: contact-sales
+free_tier:
+  advertised: true
+  self_service: false
+  note: >-
+    The site advertises "Try Resolver for free" but the trial is gated behind a demo
+    request and a manually created account, so no price, quota or duration is published.
+plans: []
+evidence:
+- url: https://rtr.ai/pricing/
+  status: 404
+- url: https://rtr.ai/demo/
+  status: 200
+- url: https://resolver.rtr.ai/docs/user_guide/resolver/request_account/
+  status: 200

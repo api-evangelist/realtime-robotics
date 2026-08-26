@@ -1,0 +1,225 @@
+generated: '2026-08-26'
+method: searched
+source: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120890/2.9+Realtime+Robotics+RapidPlan+ASCII+API
+name: Realtime Robotics API conventions
+description: >-
+  Cross-cutting runtime semantics for the RapidPlan Realtime Controller ASCII API and
+  the RapidSense REST API, read from the published 2.9 references. The ASCII API is
+  unusually well specified for a socket protocol - it documents its own envelope,
+  formation rules, response classes, unit handling and persistence model - and those
+  rules are what an agent or integrator has to obey.
+auth_style:
+  ascii_api: none documented (network-level access to the Realtime Controller)
+  rapidsense_rest: none documented
+  resolver_cloud: OpenID Connect via clerk.rtr.ai (see authentication/)
+transport:
+  ascii_api:
+    protocol: TCP socket
+    default_port: 9999
+    encoding: inline YAML 1.2 request strings, CR+LF terminated
+    max_request_bytes: 2048
+    on_oversize: >-
+      Commands longer than 2KB are not forwarded out of the networking layer - they are
+      discarded and the connection is closed.
+  rapidsense_rest:
+    protocol: HTTP
+    default_port: 11235
+    encoding: JSON
+request_envelope:
+  shape: '{topic: <name>, type: <request type>, id: <client id>, data: {key: value, ...}}'
+  fields:
+    topic: required; name of the command; case-insensitive
+    type: optional; only "Command" is currently defined
+    id: optional; string or int echoed back on every matching response
+    data: optional; command arguments as key-value pairs, order-independent
+  formation_rules:
+  - Topic values are case-insensitive.
+  - A required key must be present and valid or the whole request is rejected.
+  - A missing or malformed optional key falls back to its documented default.
+  - An optional key that IS provided must be valid, or the request is rejected.
+  - Irrelevant keys are ignored.
+  - A valid value outside a specified range causes rejection.
+  - Strings may contain only numbers, letters, hyphens and underscores.
+  booleans: 'true: y/Y/yes/Yes/YES/true/True/TRUE/on/On/ON/1; false: the n/no/false/off/0 equivalents'
+  nulls: >-
+    null, ~, '' , Null and NULL are read as ordinary strings; if they do not resolve
+    against the loaded project they are rejected with an "*_NOT_FOUND" error.
+response_envelope:
+  formats:
+  - yaml (default)
+  - csv (opt in per connection with SetResponseType; fixed field order, no optional returns)
+  shape: '{topic: <name>, type: <class>, id: <echoed id>, error: {code: <int>, msg: <string>}, data: {...}}'
+  csv_shape: TopicName,code,result1,...,resultN
+  classes:
+  - name: Response
+    when: always; acknowledges whether the request was accepted
+  - name: Feedback
+    when: an intermediate event completes before the command does (e.g. each segment of a CombinedMove)
+    csv_shape: TopicNameFeedback,code,result1,...
+  - name: DelayedResponse
+    when: the command takes time (Move, LoadProject); correlated to the request by seq
+    csv_shape: TopicNameResult,code,result1,...
+  error_field: error.code (int) + error.msg (string); code 0 means success and is always present in CSV
+correlation_and_tracing:
+  client_id: optional `id` on the request is echoed on every response (omitted in CSV responses)
+  sequence_number: >-
+    A Response that carries a `seq` key guarantees a DelayedResponse will follow with the
+    same globally unique seq. WaitForMove(seq_num, timeout) in the first-party Python
+    client blocks on it.
+  request_id_header: none (not an HTTP protocol)
+ordering_and_determinism: >-
+  Commands from one source (one TCP socket) are processed in arrival order. In a
+  multi-robot cell, execution across robots is ordered and deterministic only when the
+  caller waits for each response code before sending the next command.
+pagination:
+  supported: false
+  note: >-
+    No documented collection on either surface is paginated; RapidSense list endpoints
+    (/volumes, /markers, /sensors) return the full set.
+units:
+  defaults: millimetres, degrees, roll-pitch-yaw
+  negotiation: GetUnits / SetUnits per connection; RapidSense /heights returns metres
+  note: Unit selection is per-client, so two clients on the same controller can disagree.
+statefulness:
+  presets: >-
+    Commands are stateful - a workcell/robot preset is set once and subsequent Move
+    commands use the active preset rather than passing a workstate every time.
+  persisted_to_disk:
+  - SetDefaultProject
+  - DeactivateRobot
+  - SetRobotPreset
+  - SetObjectState
+  - CreateTarget
+  - UpdateTarget
+  - RenameTarget
+  - RemoveTarget
+  - AddConnection
+  - RemoveConnection
+  not_persisted_across_reboot:
+  - SetMaxLinearAcceleration
+  - SetMaxLinearSpeed
+  - SetAlternateLocation
+  - SetInterruptBehavior
+  - SetResponseType
+  - SetUnits
+  - Scene Modeling commands
+idempotency:
+  supported: true
+  grade: documented
+  mechanism: http-put-full-replacement
+  idempotency_key_header: none
+  evidence: >-
+    The RapidSense 2.9 API reference states of PUT /volumes/<id>: "Updates must be
+    idempotent, i.e., updates must be a full replacement of the volume details", and
+    defines PUT as create-or-replace on a caller-supplied id. Marker resources use the
+    caller-supplied 36h11 tag id as the resource id, so re-creating an existing marker
+    is rejected with 422 rather than duplicated.
+  not_present: >-
+    There is no Idempotency-Key header, no request-replay window and no de-duplication
+    guarantee on the ASCII API, whose Move commands are explicitly sequence-numbered
+    rather than idempotent. An agent retrying a Move will queue a second motion.
+  source: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120157/2.9+RapidSense+API
+reversibility:
+  grade: documented
+  overall_note: >-
+    Both controller APIs are write-heavy and safety-critical, and every write class has
+    a documented reversal. What is NOT documented anywhere is a time window: no page
+    states how long a cancel, hold or delete remains possible, so nothing here grades
+    as verified. No window has been asserted that the documentation does not state.
+  surfaces:
+  - api: realtime-robotics:rapidplan-ascii-api
+    writes:
+    - operation: Move
+      reversal: CancelMove
+      window_documented: false
+      note: >-
+        Cancels an in-flight or queued move. The 2.9 release notes record a known defect
+        (error 7005 on paths with many edges, RAPID-50487), so the reversal is documented
+        but not unconditional.
+    - operation: Move
+      reversal: HoldMove / ResumeMove
+      window_documented: false
+      note: Pauses and resumes motion rather than discarding it; clarified in 2.9.
+    - operation: EnterOperationMode
+      reversal: EnterConfigurationMode
+      window_documented: false
+    - operation: fault state
+      reversal: ClearFaults
+      window_documented: false
+      note: FAULT -> CONFIG transition.
+    - operation: ActivateRobots
+      reversal: DeactivateRobot
+      window_documented: false
+    - operation: AcquireControl
+      reversal: ReleaseControl
+      window_documented: false
+    - operation: LoadProject
+      reversal: UnloadProject
+      window_documented: false
+    - operation: CreateTarget / UpdateTarget
+      reversal: RemoveTarget
+      window_documented: false
+      note: >-
+        Not a true undo - UpdateTarget only applies if all of a target's connections stay
+        valid, otherwise it fails and returns an error code rather than half-applying.
+    - operation: AddConnection
+      reversal: RemoveConnection
+      window_documented: false
+    - operation: AddBox / AddObject / AddFrame
+      reversal: RemoveBoxes / RemoveObjects / RemoveFrames
+      window_documented: false
+    - operation: SetObjectState / SetRobotPreset / SetWorkcellState
+      reversal: re-issue with the previous state (no dedicated undo)
+      window_documented: false
+    validation_rollback: >-
+      SetWorkcellState and related scene changes document a validation mode that requires
+      validation to succeed or the change is rolled back (the default), and a permissive
+      mode that allows validation to fail with no error code.
+  - api: realtime-robotics:rapidsense-api
+    writes:
+    - operation: POST /volumes
+      reversal: DELETE /volumes/<id>
+      window_documented: false
+    - operation: POST /markers
+      reversal: DELETE /markers/<id>
+      window_documented: false
+    - operation: POST /changes
+      reversal: DELETE /changes/<id>
+      window_documented: false
+    - operation: ScanScene start_streaming
+      reversal: ScanScene stop_streaming / clear
+      window_documented: false
+  - api: realtime-robotics:resolver-cloud
+    writes:
+    - operation: study upload / run
+      reversal: not documented
+      window_documented: false
+      note: >-
+        The Resolver documentation describes deleting items you own from the location
+        dialog but states no retention or recovery window.
+dry_run_mode:
+  supported: partial
+  note: >-
+    Not a dry-run flag, but the whole product is a simulation-first workflow: Resolver
+    plans and validates a study offline before it is exported to a controller, and the
+    ASCII API's scene-modelling commands run validation before committing. No API-level
+    "simulate this request" parameter is documented.
+versioning:
+  ascii_api: >-
+    Major/minor tied to the RapidPlan release (1.x -> 2.0 was a breaking re-implementation;
+    2.1 through 2.10.1 are additive). The 2.x design goal is stated explicitly: inline
+    YAML key-value pairs so new optional arguments can be added with defaults and
+    "existing code will remain functional on newer software versions".
+  rapidsense_api: 2.x, versioned with RapidPlan
+  resolver_cloud: calendar versioned releases (e.g. 2026.08.24)
+  in_url: false
+  header: none documented
+rate_limit_signaling:
+  documented: false
+  note: No rate limits, quotas or throttling headers are published for any surface.
+error_envelope: see errors/realtime-robotics-error-codes.yml
+cross_links:
+- errors/realtime-robotics-error-codes.yml
+- lifecycle/realtime-robotics-lifecycle.yml
+- authentication/realtime-robotics-authentication.yml
+- rate-limits/realtime-robotics-rate-limits.yml

@@ -1,0 +1,135 @@
+generated: '2026-08-26'
+method: searched
+source: https://github.com/RealtimeRobotics/RealtimeExamples
+name: Realtime Robotics client libraries and distributions
+description: >-
+  Realtime Robotics publishes no package on any public registry. Searched npm, PyPI,
+  RubyGems, crates.io, NuGet, Maven Central, pkg.go.dev and Packagist for rtr,
+  realtimerobotics, rapidplan, pythoncommander and rtr-controller - every lookup 404s.
+  What it does publish is source-distributed: first-party client libraries for the
+  Realtime Controller ASCII API in Python, C# and CODESYS structured text, all inside
+  one archived GitHub repository, plus versioned connector installers for the Resolver
+  cloud service distributed through the application itself.
+registries_searched:
+- registry: npm
+  result: no packages found
+- registry: pypi
+  result: no packages found
+- registry: rubygems
+  result: not searched - no Ruby surface exists
+- registry: nuget
+  result: >-
+    no first-party package found; the C# client is distributed as project source with a
+    checked-in netstandard2.1 DLL, not as a NuGet package
+- registry: crates.io
+  result: no packages found
+- registry: maven-central
+  result: no packages found
+packages:
+- name: PythonCommander
+  language: Python
+  official: true
+  registry: github
+  url: https://github.com/RealtimeRobotics/RealtimeExamples/tree/master/python/lib
+  repo: https://github.com/RealtimeRobotics/RealtimeExamples
+  install: git clone; no packaging metadata (no setup.py, pyproject.toml or wheel)
+  version: null
+  published: null
+  version_note: >-
+    Source-only distribution with no version number of any kind. The repository's last
+    push was 2021-06-11 and it is ARCHIVED on GitHub, which makes this the strongest
+    decay signal in the profile: the first-party Python client predates the 2.0 ASCII
+    API rewrite documentation and every 2.x release from 2.1 (2023) through 2.10.1
+    (2024). Its documented methods (MoveToHub, MoveToPose, BlindMove, OffroadToHub,
+    InitGroup, TerminateGroup, ChangeWorkState) are 1.x-era command names that the 2.x
+    ASCII API renamed or removed.
+  covers: RapidPlan Realtime Controller ASCII API 1.x
+  docs: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/1503003126/Python+library+function+documentation
+  archived: true
+  last_release_date: '2021-06-11'
+- name: CommonOperations / PythonCommanderHelper
+  language: Python
+  official: true
+  registry: github
+  url: https://github.com/RealtimeRobotics/RealtimeExamples/tree/master/python/lib
+  version: null
+  published: null
+  version_note: Unversioned helper libraries in the same archived repository.
+  archived: true
+  last_release_date: '2021-06-11'
+- name: csharp_commander
+  language: C#
+  official: true
+  registry: github
+  url: https://github.com/RealtimeRobotics/RealtimeExamples/tree/master/C%23
+  version: null
+  published: null
+  version_note: >-
+    No NuGet package and no assembly version published; distributed as a .csproj plus a
+    checked-in netstandard2.1 DLL. One command class per ASCII command (AcquireControl,
+    BeginOperationMode, BlindMove, CancelMove, ChangeWorkState, ClearFaults,
+    EndOperationMode, GetMode, InitGroup, MoveToHub, MoveToPose, OffroadToHub,
+    ReleaseControl, SetInterruptBehavior, TerminateGroup) - again the 1.x command set.
+  archived: true
+  last_release_date: '2021-06-11'
+- name: RTR Controller Library (CODESYS)
+  language: IEC 61131-3 structured text
+  official: true
+  registry: github
+  url: https://github.com/RealtimeRobotics/RealtimeExamples/tree/master/PLC/RealtimeCodesysControl
+  version: null
+  published: null
+  version_note: >-
+    Distributed as a CODESYS .library / .compiled-library inside the archived examples
+    repository; no library version is published in the repository metadata.
+  docs: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/1503002905/Using+the+Codesys+SoftPLC+as+Task+Manager
+  archived: true
+  last_release_date: '2021-06-11'
+- name: PLC Library for Siemens PLC Integration with ProfiNet
+  language: IEC 61131-3 / TIA Portal
+  official: true
+  registry: vendor-download
+  url: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3429040129/PLC+Library+Documentation+for+Siemens+PLC+Integration+with+ProfiNet
+  version: null
+  published: null
+  version_note: >-
+    Distributed as attachments on the documentation page (example RPC project archive
+    plus a fieldbus lookup table). The attachments are dated 2024-09-09 in their file
+    names; no library version is published.
+- name: Process Simulate Connector
+  language: .NET plugin for Siemens Process Simulate
+  official: true
+  registry: vendor-download
+  url: https://resolver.rtr.ai/docs/user_guide/connectors/ps/ps_connector_download_install
+  version: 1.26.0
+  published: '2026-08-24'
+  version_note: >-
+    Version and date read from the Resolver 2026.08.24 release post, which names the
+    connector versions that release is "enabled by". Distributed from the Resolver
+    application, not a public registry.
+- name: Visual Components Connector
+  language: plugin for Visual Components
+  official: true
+  registry: vendor-download
+  url: https://resolver.rtr.ai/docs/user_guide/connectors/vc/vc_connector_download_install
+  version: 1.22.0
+  published: '2026-08-24'
+  version_note: Version and date from the Resolver 2026.08.24 release post.
+- name: MELSOFT Gemini Connector
+  language: plugin for Mitsubishi MELSOFT Gemini
+  official: true
+  registry: vendor-download
+  url: https://resolver.rtr.ai/docs/user_guide/connectors/gemini/gemini_connector_download_install
+  version: 1.22.0
+  published: '2026-08-24'
+  version_note: Version and date from the Resolver 2026.08.24 release post.
+summary:
+  registry_published: 0
+  first_party_source_libraries: 4
+  vendor_download_components: 4
+  newest_first_party_client_library_release: '2021-06-11'
+  note: >-
+    Every language client Realtime Robotics ships for its own runtime API is inside one
+    archived 2021 repository, while the API it wraps has shipped nine documented versions
+    since. The actively maintained, currently versioned artifacts are all simulation-tool
+    connectors for the cloud product, not clients for the controller API.

@@ -1,0 +1,49 @@
+generated: '2026-08-26'
+method: probed
+source: https://clerk.rtr.ai/.well-known/openid-configuration
+docs: https://resolver.rtr.ai/docs/user_guide/resolver/log_in/
+name: Realtime Robotics OAuth scopes
+description: >-
+  Realtime Robotics declares no oauth2 securitySchemes anywhere - it publishes no
+  OpenAPI at all - so this scope list is read directly from the OpenID Connect
+  discovery document its identity service publishes at clerk.rtr.ai. These are the
+  scopes the Resolver Cloud identity layer advertises; they are identity and
+  organisation scopes, not resource scopes over a Resolver API, and no scope-to-endpoint
+  mapping is published because the Resolver REST API itself is documented as not yet
+  publicly available.
+issuer: https://clerk.rtr.ai
+applies_to: realtime-robotics:resolver-cloud
+scopes:
+- name: openid
+  description: OpenID Connect - request an ID token for the authenticated subject.
+- name: profile
+  description: Profile claims (name, given_name, family_name, preferred_username, picture).
+- name: email
+  description: Email address and email_verified claim.
+- name: offline_access
+  description: Issue a refresh token so the client can renew access without re-prompting.
+- name: user:org:read
+  description: Read the organisation membership of the authenticated user (org_id claim).
+- name: public_metadata
+  description: Read the user's public metadata.
+- name: private_metadata
+  description: Read the user's private metadata.
+claims_supported:
+- sub
+- iss
+- aud
+- exp
+- iat
+- email
+- email_verified
+- name
+- given_name
+- family_name
+- preferred_username
+- picture
+- org_id
+x-evidence:
+  fetched: '2026-08-26'
+  url: https://clerk.rtr.ai/.well-known/openid-configuration
+  http_status: 200
+  content_type: application/json

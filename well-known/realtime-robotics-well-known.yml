@@ -1,0 +1,155 @@
+generated: '2026-08-26'
+method: probed
+source: live probe of every Realtime Robotics host on 2026-08-26
+name: Realtime Robotics well-known documents
+description: >-
+  Per-host probe of RFC 8615 /.well-known/ paths across every host Realtime Robotics
+  controls. One host serves real documents: clerk.rtr.ai, the Clerk identity service
+  fronting the Resolver Cloud application on the company's own domain, publishes an
+  OpenID Connect discovery document, an RFC 8414 authorization-server metadata document
+  and a JWKS. Every other path on every other host is absent.
+hosts:
+- host: clerk.rtr.ai
+  note: >-
+    Identity service for the Resolver Cloud application (app.resolver.rtr.ai /
+    app-eu.resolver.rtr.ai), served on a Realtime Robotics subdomain.
+  documents:
+  - path: /.well-known/openid-configuration
+    status: 200
+    content_type: application/json
+    file: well-known/realtime-robotics-clerk-openid-configuration.json
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    file: well-known/realtime-robotics-clerk-oauth-authorization-server.json
+  - path: /.well-known/jwks.json
+    status: 200
+    content_type: application/json
+    file: well-known/realtime-robotics-clerk-jwks.json
+  - path: /.well-known/security.txt
+    status: 404
+    file: null
+  - path: /.well-known/api-catalog
+    status: 404
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 404
+    file: null
+- host: rtr.ai
+  note: Corporate website (WordPress). Every probed path returns the site 404 template.
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 404
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    file: null
+  - path: /.well-known/api-catalog
+    status: 404
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 404
+    file: null
+  - path: /.well-known/agent.json
+    status: 404
+    file: null
+- host: app.resolver.rtr.ai
+  note: Resolver Cloud application (global region).
+  documents:
+  - path: /.well-known/openid-configuration
+    status: 404
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    file: null
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    file: null
+  - path: /.well-known/security.txt
+    status: 404
+    file: null
+  - path: /.well-known/api-catalog
+    status: 404
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 404
+    file: null
+  - path: /.well-known/agent.json
+    status: 404
+    file: null
+- host: app-eu.resolver.rtr.ai
+  note: Resolver Cloud application (Europe region).
+  documents:
+  - path: /.well-known/openid-configuration
+    status: 404
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    file: null
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    file: null
+  - path: /.well-known/security.txt
+    status: 404
+    file: null
+  - path: /.well-known/api-catalog
+    status: 404
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 404
+    file: null
+  - path: /.well-known/agent.json
+    status: 404
+    file: null
+- host: resolver.rtr.ai
+  note: >-
+    Resolver documentation site. Cloudflare answers 403 with a "Just a moment"
+    interstitial for every path that does not exist, so these are challenged misses
+    rather than served documents. Published documentation pages on the same host
+    return 200 to the same client, so the host is not blocking us generally.
+  documents:
+  - path: /.well-known/security.txt
+    status: 403
+    file: null
+  - path: /.well-known/api-catalog
+    status: 403
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 403
+    file: null
+  - path: /.well-known/agent.json
+    status: 403
+    file: null
+- host: realtimerobotics.com
+  note: >-
+    NOT the company's operating site. Every path, including /, returns a 114-byte
+    HTML document that JavaScript-redirects to /lander - a parked-domain placeholder.
+    The 200s on /.well-known/* are catch-all soft-404s and are recorded as misses.
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    file: null
+    served_document: false
+    body: parked-domain lander redirect, not a well-known document
+  - path: /.well-known/api-catalog
+    status: 200
+    file: null
+    served_document: false
+    body: parked-domain lander redirect, not a well-known document
+  - path: /.well-known/agent-card.json
+    status: 200
+    file: null
+    served_document: false
+    body: parked-domain lander redirect, not a well-known document
+summary:
+  hosts_probed: 6
+  documents_served: 3
+  security_txt: false
+  api_catalog: false
+  agent_card: false

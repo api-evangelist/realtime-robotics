@@ -1,0 +1,873 @@
+generated: '2026-08-26'
+method: derived
+source: json-schema/realtime-robotics-operations-query.schema.json
+name: Realtime Robotics Resolver data model
+description: Entity-relationship graph derived from the Operations Query JSON Schema Realtime Robotics
+  publishes for Resolver's queries.json, plus the project.yaml structure documented in prose. This is
+  the only formal data model the company publishes; the RapidPlan Realtime Controller and RapidSense have
+  no schema, so their resources are recorded separately from the docs and are not part of the derived
+  graph.
+root:
+  title: Operations Query
+  type: object
+  required:
+  - query_type
+  - version
+  - query
+  properties:
+  - end_condition
+  - query
+  - query_type
+  - version
+entity_count: 63
+entities:
+- name: CartesianHybridSegment
+  title: Cartesian Hybrid Segment
+  type: object
+  required:
+  - interpolation
+  - switch_distance
+  properties:
+  - interpolation
+  - speed
+  - switch_distance
+  refs:
+  - MaxTcpSpeed
+- name: CartesianTargetTaskInfo
+  title: Cartesian Target Task Info
+  type: object
+  required:
+  - target
+  - on_target_commands
+  - approach
+  - retreat
+  - configuration_setting
+  - interpolation
+  properties:
+  - approach
+  - configuration_setting
+  - interpolation
+  - material_thickness
+  - move_type
+  - on_target_commands
+  - retreat
+  - speed
+  - target
+  refs:
+  - ConfigurationSetting
+  - MaxTcpSpeed
+  - MoveType
+  - TargetTaskOnTargetSubtask
+  - TargetTaskTransientSubtask
+- name: ConfigurationSetting
+  title: Configuration Setting
+- name: Constraint
+  title: Constraint
+  type: object
+  required:
+  - preceding_id
+  - preceding_constraint
+  - succeeding_constraint
+  properties:
+  - preceding_constraint
+  - preceding_id
+  - succeeding_constraint
+  refs:
+  - ConstraintType
+- name: ConstraintType
+  title: ConstraintType
+  type: string
+- name: DirectMotionSubAction
+  title: Direct Motion Sub Action
+  type: object
+  required:
+  - id
+  - type
+  - subtask_points
+  properties:
+  - description
+  - id
+  - subtask_duration
+  - subtask_points
+  - type
+  refs:
+  - SubtaskInputPoint
+- name: DocAndEndCondition
+  title: And
+  type: object
+  required:
+  - type
+  - conditions
+  properties:
+  - conditions
+  - type
+  refs:
+  - EndConditionPlaceholder
+- name: DocEndCondition
+  title: End Condition
+- name: DocOrEndCondition
+  title: Or
+  type: object
+  required:
+  - type
+  - conditions
+  properties:
+  - conditions
+  - type
+  refs:
+  - EndConditionPlaceholder
+- name: DriveJoint
+  title: Drive Joint
+  type: object
+  required:
+  - goal
+  properties:
+  - duration
+  - goal
+- name: DriveJointsAction
+  title: Drive Joints Action
+  type: object
+  required:
+  - id
+  - type
+  - moves
+  properties:
+  - description
+  - id
+  - moves
+  - parent
+  - type
+  refs:
+  - DriveJoint
+- name: DriveJointsSubAction
+  title: Drive Joints Sub Action
+  type: object
+  required:
+  - id
+  - type
+  - moves
+  properties:
+  - description
+  - id
+  - moves
+  - type
+  refs:
+  - DriveJoint
+- name: DummyAction
+  title: Dummy Action
+  type: object
+  required:
+  - id
+  - type
+  properties:
+  - description
+  - id
+  - parent
+  - type
+- name: DummySubAction
+  title: Dummy Sub Action
+  type: object
+  required:
+  - id
+  - type
+  properties:
+  - description
+  - id
+  - type
+- name: EndConditionPlaceholder
+  title: End Condition
+  type: object
+- name: GlobalRobotInputs
+  title: Robot Inputs
+  type: object
+  required:
+  - start_target
+  - end_target
+  properties:
+  - end_target
+  - robot_setup
+  - start_target
+  - user_defined_actuator_values
+- name: GunJointInfo
+  title: Gun Joint Info
+  type: object
+  required:
+  - gun_joint_name
+  - schedule_json
+  properties:
+  - gun_joint_name
+  - schedule_json
+- name: HybridSegment
+  title: Hybrid Segment
+- name: HybridTargetTaskInfo
+  title: Hybrid Target Task Info
+  type: object
+  required:
+  - target
+  - on_target_commands
+  - approach
+  - retreat
+  - configuration_setting
+  - interpolation
+  - segments
+  - move_type
+  properties:
+  - approach
+  - configuration_setting
+  - interpolation
+  - material_thickness
+  - move_type
+  - on_target_commands
+  - retreat
+  - segments
+  - target
+  refs:
+  - ConfigurationSetting
+  - HybridSegment
+  - TargetTaskOnTargetSubtask
+  - TargetTaskTransientSubtask
+- name: InterferencesPenaltyWeight
+  title: InterferencesPenaltyWeight
+  type: string
+- name: InterlockLocations
+  title: InterlockLocations
+  type: string
+- name: InterpolationType
+  title: InterpolationType
+  type: string
+- name: JointHybridSegment
+  title: Joint Hybrid Segment
+  type: object
+  required:
+  - interpolation
+  - switch_distance
+  properties:
+  - interpolation
+  - speed
+  - switch_distance
+  refs:
+  - SpeedOverride
+- name: JointTargetTaskInfo
+  title: Joint Target Task Info
+  type: object
+  required:
+  - target
+  - on_target_commands
+  - approach
+  - retreat
+  - configuration_setting
+  - interpolation
+  properties:
+  - approach
+  - configuration_setting
+  - interpolation
+  - material_thickness
+  - move_type
+  - on_target_commands
+  - retreat
+  - speed
+  - target
+  refs:
+  - ConfigurationSetting
+  - MoveType
+  - SpeedOverride
+  - TargetTaskOnTargetSubtask
+  - TargetTaskTransientSubtask
+- name: KeepConfiguration
+  title: Keep Configuration
+  type: object
+  required:
+  - type
+  properties:
+  - type
+- name: MaxTcpSpeed
+  title: Max Tcp Speed
+  type: object
+  required:
+  - type
+  - value
+  properties:
+  - type
+  - value
+- name: MoveType
+  title: MoveType
+  type: string
+- name: NoOpAction
+  title: No Op Action
+  type: object
+  required:
+  - id
+  - type
+  properties:
+  - description
+  - id
+  - parent
+  - type
+- name: NoOpSubAction
+  title: No Op Sub Action
+  type: object
+  required:
+  - id
+  - type
+  properties:
+  - description
+  - id
+  - type
+- name: OperationAction
+  title: Operation Action
+  type: object
+  required:
+  - id
+  - type
+  properties:
+  - children
+  - description
+  - id
+  - on_end
+  - on_enter
+  - parent
+  - type
+  refs:
+  - OperationActionSubCommand
+- name: OperationActionSubCommand
+  title: Action Sub Command
+- name: OperationsQuery
+  title: Operations Query Details
+  type: object
+  required:
+  - robots
+  - actions
+  properties:
+  - actions
+  - enable_smoothing
+  - initial_independent_joint_values
+  - initial_mate_states
+  - interferences_penalty_weight
+  - optimize_end_conditions
+  - precedence_constraints
+  - robots
+  - seed
+  - smoothing_tables
+  - use_homes_as_obstacles
+  - weld_schedules
+  refs:
+  - Constraint
+  - GlobalRobotInputs
+  - GunJointInfo
+  - InterferencesPenaltyWeight
+  - OperationsQueryAction
+  - OptimizeEndConditions
+  - SmoothingTablePercentage
+  - SmoothingTableRadius
+- name: OperationsQueryAction
+  title: Query Actions
+- name: OptimizeConfiguration
+  title: Optimize Configuration
+  type: object
+  required:
+  - type
+  properties:
+  - type
+- name: OptimizeEndConditions
+  title: Optimize End Conditions
+  type: object
+  properties:
+  - elapsed_time
+  - max_cycle_time
+  - stage
+  refs:
+  - OptimizeStage
+- name: OptimizeStage
+  title: OptimizeStage
+  type: string
+- name: OptimizeToolRx
+  title: Optimize Tool Rx
+  type: object
+  required:
+  - type
+  properties:
+  - allow_flip
+  - type
+- name: OptimizeToolRy
+  title: Optimize Tool Ry
+  type: object
+  required:
+  - type
+  properties:
+  - allow_flip
+  - type
+- name: OptimizeToolRz
+  title: Optimize Tool Rz
+  type: object
+  required:
+  - type
+  properties:
+  - allow_flip
+  - type
+- name: OptimizeToolWithinBox
+  title: Optimize Tool Within Box
+  type: object
+  required:
+  - type
+  - min_point
+  - max_point
+  properties:
+  - max_point
+  - min_point
+  - type
+  refs:
+  - Point
+- name: Point
+  title: Point
+  type: object
+  required:
+  - x
+  - y
+  - z
+  properties:
+  - x
+  - y
+  - z
+- name: Pose
+  title: Pose
+  type: object
+  required:
+  - xyz
+  - rpy
+  properties:
+  - rpy
+  - xyz
+- name: PoseOffset
+  title: Pose Offset
+  type: object
+  required:
+  - type
+  - offset
+  properties:
+  - external_actuator_values
+  - offset
+  - type
+  refs:
+  - Pose
+- name: SmoothingPercentage
+  title: Smoothing Percentage
+  type: object
+  required:
+  - type
+  - value
+  properties:
+  - type
+  - value
+- name: SmoothingRadius
+  title: Smoothing Radius
+  type: object
+  required:
+  - type
+  - value
+  properties:
+  - type
+  - value
+- name: SmoothingTablePercentage
+  title: Smoothing Table Percentage
+  type: object
+  required:
+  - type
+  - values
+  properties:
+  - type
+  - values
+- name: SmoothingTableRadius
+  title: Smoothing Table Radius
+  type: object
+  required:
+  - type
+  - values
+  properties:
+  - type
+  - values
+- name: SmoothingUnsmoothed
+  title: Smoothing Unsmoothed
+  type: object
+  required:
+  - type
+  properties:
+  - type
+- name: SpeedOverride
+  title: Speed Override
+  type: object
+  required:
+  - type
+  - value
+  properties:
+  - type
+  - value
+- name: SubtaskInputPoint
+  title: Subtask Input Point
+  type: object
+  required:
+  - point
+  - interpolation
+  properties:
+  - interpolation
+  - point
+  - smoothing
+  - speed_setting
+  refs:
+  - InterpolationType
+  - MaxTcpSpeed
+  - PoseOffset
+  - SmoothingPercentage
+  - SmoothingRadius
+  - SmoothingUnsmoothed
+  - SpeedOverride
+- name: TargetAction
+  title: Target Action
+  type: object
+  required:
+  - id
+  - type
+  - task
+  properties:
+  - category
+  - description
+  - id
+  - interlock_locations
+  - parent
+  - share
+  - task
+  - task_motion_presets
+  - type
+  refs:
+  - InterlockLocations
+  - TargetActionCategory
+  - TargetTaskInfo
+- name: TargetActionCategory
+  title: TargetActionCategory
+  type: string
+- name: TargetTaskInfo
+  title: Target Task
+- name: TargetTaskOnTargetSubtask
+  title: On-Target Command
+- name: TargetTaskTransientSubtask
+  title: Transient Sub Task
+- name: TimeConvergenceEndCondition
+  title: Time Convergence
+  type: object
+  required:
+  - type
+  - time_threshold
+  - improvement_threshold
+  properties:
+  - improvement_threshold
+  - time_threshold
+  - type
+- name: TimeElapsedEndCondition
+  title: Time Elapsed
+  type: object
+  required:
+  - type
+  - time_threshold
+  properties:
+  - time_threshold
+  - type
+- name: UpdateWorkcellAction
+  title: Update Workcell Action
+  type: object
+  required:
+  - id
+  - type
+  properties:
+  - description
+  - id
+  - parent
+  - presets
+  - states
+  - type
+- name: UpdateWorkcellSubAction
+  title: Update Workcell Sub Action
+  type: object
+  required:
+  - id
+  - type
+  properties:
+  - description
+  - id
+  - presets
+  - states
+  - type
+- name: WaitAction
+  title: Wait Action
+  type: object
+  required:
+  - id
+  - type
+  properties:
+  - description
+  - duration
+  - id
+  - parent
+  - type
+- name: WaitJointsAction
+  title: Wait Joints Action
+  type: object
+  required:
+  - id
+  - type
+  - joints
+  properties:
+  - description
+  - id
+  - joints
+  - parent
+  - type
+- name: WaitJointsSubAction
+  title: Wait Joints Sub Action
+  type: object
+  required:
+  - id
+  - type
+  - joints
+  properties:
+  - description
+  - id
+  - joints
+  - type
+- name: WaitSubAction
+  title: Wait Sub Action
+  type: object
+  required:
+  - id
+  - type
+  properties:
+  - description
+  - duration
+  - id
+  - type
+relationships:
+- from: CartesianHybridSegment
+  to: MaxTcpSpeed
+  kind: references
+  via: $ref
+- from: CartesianTargetTaskInfo
+  to: ConfigurationSetting
+  kind: references
+  via: $ref
+- from: CartesianTargetTaskInfo
+  to: MaxTcpSpeed
+  kind: references
+  via: $ref
+- from: CartesianTargetTaskInfo
+  to: MoveType
+  kind: references
+  via: $ref
+- from: CartesianTargetTaskInfo
+  to: TargetTaskOnTargetSubtask
+  kind: references
+  via: $ref
+- from: CartesianTargetTaskInfo
+  to: TargetTaskTransientSubtask
+  kind: references
+  via: $ref
+- from: Constraint
+  to: ConstraintType
+  kind: references
+  via: $ref
+- from: DirectMotionSubAction
+  to: SubtaskInputPoint
+  kind: references
+  via: $ref
+- from: DocAndEndCondition
+  to: EndConditionPlaceholder
+  kind: references
+  via: $ref
+- from: DocOrEndCondition
+  to: EndConditionPlaceholder
+  kind: references
+  via: $ref
+- from: DriveJointsAction
+  to: DriveJoint
+  kind: references
+  via: $ref
+- from: DriveJointsSubAction
+  to: DriveJoint
+  kind: references
+  via: $ref
+- from: HybridTargetTaskInfo
+  to: ConfigurationSetting
+  kind: references
+  via: $ref
+- from: HybridTargetTaskInfo
+  to: HybridSegment
+  kind: references
+  via: $ref
+- from: HybridTargetTaskInfo
+  to: TargetTaskOnTargetSubtask
+  kind: references
+  via: $ref
+- from: HybridTargetTaskInfo
+  to: TargetTaskTransientSubtask
+  kind: references
+  via: $ref
+- from: JointHybridSegment
+  to: SpeedOverride
+  kind: references
+  via: $ref
+- from: JointTargetTaskInfo
+  to: ConfigurationSetting
+  kind: references
+  via: $ref
+- from: JointTargetTaskInfo
+  to: MoveType
+  kind: references
+  via: $ref
+- from: JointTargetTaskInfo
+  to: SpeedOverride
+  kind: references
+  via: $ref
+- from: JointTargetTaskInfo
+  to: TargetTaskOnTargetSubtask
+  kind: references
+  via: $ref
+- from: JointTargetTaskInfo
+  to: TargetTaskTransientSubtask
+  kind: references
+  via: $ref
+- from: OperationAction
+  to: OperationActionSubCommand
+  kind: references
+  via: $ref
+- from: OperationsQuery
+  to: Constraint
+  kind: references
+  via: $ref
+- from: OperationsQuery
+  to: GlobalRobotInputs
+  kind: references
+  via: $ref
+- from: OperationsQuery
+  to: GunJointInfo
+  kind: references
+  via: $ref
+- from: OperationsQuery
+  to: InterferencesPenaltyWeight
+  kind: references
+  via: $ref
+- from: OperationsQuery
+  to: OperationsQueryAction
+  kind: references
+  via: $ref
+- from: OperationsQuery
+  to: OptimizeEndConditions
+  kind: references
+  via: $ref
+- from: OperationsQuery
+  to: SmoothingTablePercentage
+  kind: references
+  via: $ref
+- from: OperationsQuery
+  to: SmoothingTableRadius
+  kind: references
+  via: $ref
+- from: OptimizeEndConditions
+  to: OptimizeStage
+  kind: references
+  via: $ref
+- from: OptimizeToolWithinBox
+  to: Point
+  kind: references
+  via: $ref
+- from: PoseOffset
+  to: Pose
+  kind: references
+  via: $ref
+- from: SubtaskInputPoint
+  to: InterpolationType
+  kind: references
+  via: $ref
+- from: SubtaskInputPoint
+  to: MaxTcpSpeed
+  kind: references
+  via: $ref
+- from: SubtaskInputPoint
+  to: PoseOffset
+  kind: references
+  via: $ref
+- from: SubtaskInputPoint
+  to: SmoothingPercentage
+  kind: references
+  via: $ref
+- from: SubtaskInputPoint
+  to: SmoothingRadius
+  kind: references
+  via: $ref
+- from: SubtaskInputPoint
+  to: SmoothingUnsmoothed
+  kind: references
+  via: $ref
+- from: SubtaskInputPoint
+  to: SpeedOverride
+  kind: references
+  via: $ref
+- from: TargetAction
+  to: InterlockLocations
+  kind: references
+  via: $ref
+- from: TargetAction
+  to: TargetActionCategory
+  kind: references
+  via: $ref
+- from: TargetAction
+  to: TargetTaskInfo
+  kind: references
+  via: $ref
+relationship_count: 44
+undeclared_surfaces:
+- api: realtime-robotics:rapidsense-api
+  resources:
+  - volumes
+  - markers
+  - sensors
+  - status
+  - heights
+  - changes
+  - changes/{id}/objects
+  schema_published: false
+  note: Documented as REST resources with example JSON bodies on the 2.9 RapidSense API page; no schema
+    is published.
+  source: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120157/2.9+RapidSense+API
+- api: realtime-robotics:rapidplan-ascii-api
+  resources:
+  - project
+  - robot
+  - robot preset
+  - workcell state
+  - target
+  - connection
+  - route
+  - frame
+  - box
+  - object
+  - object state
+  - TCP
+  - joint configuration
+  - deconfliction group
+  schema_published: false
+  note: Entity vocabulary is defined in the glossary and the naming-conventions page rather than a schema.
+  source: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467121951/2.9+Glossary+of+RapidPlan+Create+and+Realtime+Controller+Terms
+- api: realtime-robotics:resolver-cloud
+  resources:
+  - rtr_project
+  - robot_models
+  - robots
+  - objects
+  - frames
+  - targets
+  - mates
+  - joints
+  - variable_joint_limits
+  - roadmaps
+  - floor
+  schema_published: false
+  note: project.yaml (rtr_yaml_version 4.2.0) is specified in prose and YAML fragments; no JSON Schema
+    is published for it.
+  source: https://resolver.rtr.ai/docs/api/data/yaml_specification/

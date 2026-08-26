@@ -1,0 +1,37 @@
+generated: '2026-08-26'
+method: searched
+source: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120890/2.9+Realtime+Robotics+RapidPlan+ASCII+API
+name: Realtime Robotics rate limits
+description: >-
+  No rate limits, quotas, throttles or backoff signals are published for any Realtime
+  Robotics surface. The ASCII API reference documents request formation rules, response
+  classes, a request-size ceiling and ordering guarantees in detail, but says nothing
+  about request rate; the RapidSense REST reference documents status codes per endpoint
+  with no 429 and no RateLimit headers; and the Resolver Cloud REST API is not yet
+  publicly available, so it has no published limits either.
+limit_count: 0
+limits: []
+response_headers: []
+exhaustion_status: null
+related_ceilings:
+- surface: realtime-robotics:rapidplan-ascii-api
+  constraint: request size
+  value: 2048 bytes
+  behaviour: >-
+    Commands longer than 2KB are not forwarded out of the networking layer - they are
+    discarded and the connection is closed. This is a payload ceiling, not a rate limit,
+    and it fails closed with no error response.
+  source: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120890/2.9+Realtime+Robotics+RapidPlan+ASCII+API
+- surface: realtime-robotics:resolver-cloud
+  constraint: support feedback upload size
+  value: 2 GB
+  behaviour: Documented cap on the project/study data attached to a support feedback report.
+  source: https://resolver.rtr.ai/blog/2026/08/24/2026-08-24/
+concurrency:
+  documented: true
+  note: >-
+    The ASCII API documents an ordering rather than a rate contract - commands from one
+    socket are processed in arrival order, and multi-robot execution is deterministic only
+    when the caller waits for each response code before sending the next command. A
+    planning Move is rejected outright if the target robot is already executing a request.
+  source: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120890/2.9+Realtime+Robotics+RapidPlan+ASCII+API

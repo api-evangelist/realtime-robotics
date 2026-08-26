@@ -1,0 +1,37 @@
+generated: '2026-08-26'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: rtr.ai
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Nov  9 05:41:40 2026 GMT
+  hsts: false
+- host: realtimerobotics.atlassian.net
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Feb  6 23:59:59 2027 GMT
+  hsts: true
+  hsts_max_age: 31536000
+- host: resolver.rtr.ai
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct 14 10:02:46 2026 GMT
+  hsts: false
+domains:
+- domain: rtr.ai
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: reject
+- domain: atlassian.net
+  dnssec: false
+  caa:
+  - 0 issuewild "amazon.com"
+  - 0 issuewild "digicert.com; account=c2eb0f50ca113d7543d58a10f523d0469ff922f115e5e4e9056f3d5f87d3356c"
+  - 0 issue "amazon.com"
+  - 0 issue "digicert.com; account=c2eb0f50ca113d7543d58a10f523d0469ff922f115e5e4e9056f3d5f87d3356c"
+  spf: true
+  dmarc: true
+  dmarc_policy: reject

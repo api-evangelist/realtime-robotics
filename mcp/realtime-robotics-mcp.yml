@@ -1,0 +1,29 @@
+generated: '2026-08-26'
+method: searched
+source: probe of rtr.ai, resolver.rtr.ai, app.resolver.rtr.ai and app-eu.resolver.rtr.ai on 2026-08-26
+name: Realtime Robotics MCP posture
+status: none
+description: >-
+  Realtime Robotics ships no Model Context Protocol server. No hosted /mcp endpoint
+  exists on any host (404 on both Resolver application hosts), no MCP package is
+  published on npm or PyPI, and no MCP, agent or LLM integration appears anywhere in the
+  RapidPlan or Resolver documentation. No candidate tool list has been derived either,
+  because there is no OpenAPI to derive one from - the company publishes no machine-readable
+  operation inventory for any of its three API surfaces.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: unknown
+  verified: probed
+tools: []
+probes:
+- url: https://app.resolver.rtr.ai/mcp
+  status: 404
+- url: https://app-eu.resolver.rtr.ai/mcp
+  status: 404
+- url: https://registry.npmjs.org/realtimerobotics
+  status: 404
+- url: https://pypi.org/pypi/realtimerobotics/json
+  status: 404

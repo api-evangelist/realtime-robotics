@@ -1,0 +1,84 @@
+generated: '2026-08-26'
+method: searched
+source: https://resolver.rtr.ai/docs/user_guide/resolver/request_account/
+docs: https://resolver.rtr.ai/docs/user_guide/resolver/log_in/
+name: Realtime Robotics authentication profile
+description: >-
+  Realtime Robotics publishes no OpenAPI, so this profile is assembled from the
+  documentation for each of its three surfaces plus a live probe of the identity
+  service and the application API gateway. The picture is sharply split: the cloud
+  application is behind a real OpenID Connect provider, while the two on-premise
+  controller APIs document no authentication at all and rely on plant-network
+  isolation.
+surfaces:
+- api: realtime-robotics:resolver-cloud
+  name: Resolver Cloud
+  scheme: openIdConnect
+  provider: Clerk, served on the company's own subdomain clerk.rtr.ai
+  openid_configuration: https://clerk.rtr.ai/.well-known/openid-configuration
+  issuer: https://clerk.rtr.ai
+  authorization_endpoint: https://clerk.rtr.ai/oauth/authorize
+  token_endpoint: https://clerk.rtr.ai/oauth/token
+  userinfo_endpoint: https://clerk.rtr.ai/oauth/userinfo
+  jwks_uri: https://clerk.rtr.ai/.well-known/jwks.json
+  revocation_endpoint: https://clerk.rtr.ai/oauth/token/revoke
+  introspection_endpoint: https://clerk.rtr.ai/oauth/token_info
+  grant_types:
+  - authorization_code
+  - refresh_token
+  response_types:
+  - code
+  pkce:
+    supported: true
+    methods:
+    - S256
+  token_endpoint_auth_methods:
+  - client_secret_basic
+  - client_secret_post
+  - none
+  id_token_signing_alg:
+  - RS256
+  onboarding: >-
+    Accounts are not self-service. The documentation states an account must be
+    requested with a corporate email address, first name, last name and company;
+    Realtime Robotics then creates it and sends a temporary password from
+    no-reply@verificationemail.com which the user changes on first login.
+  api_gateway_probe:
+    url: https://app.resolver.rtr.ai/api/openapi.json
+    http_status: 403
+    body: '{"message":"Missing Authentication Token"}'
+    reading: >-
+      The application's /api surface is an authenticated AWS API Gateway. Anonymous
+      callers are rejected; no public credential model for it is documented, which is
+      consistent with the docs saying the public REST API is not yet available.
+  method: probed
+- api: realtime-robotics:rapidplan-ascii-api
+  name: RapidPlan Realtime Controller ASCII API
+  scheme: none
+  evidence: >-
+    The 2.9 ASCII API reference documents the full request envelope
+    ({topic, type, id, data}) with no authentication, credential, token or key field,
+    and the first-party Python examples connect with PythonCommander(ip_addr, 9999)
+    over a raw TCP socket with no credential. GetRapidSenseStatus is documented as
+    callable "as soon as the RTR controller accepts a socket".
+  control: >-
+    Access control is network-level - the Realtime Controller is an on-premise
+    appliance on the cell network. Nothing in the published documentation authenticates
+    or authorises an individual client.
+  method: searched
+  source: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120890/2.9+Realtime+Robotics+RapidPlan+ASCII+API
+- api: realtime-robotics:rapidsense-api
+  name: RapidSense API
+  scheme: none
+  evidence: >-
+    The 2.9 RapidSense API reference documents the REST interface on port 11235 with
+    request/response bodies and HTTP status codes but no Authorization header, API key,
+    or auth scheme on any endpoint.
+  control: network-level only, same on-premise posture as the ASCII API
+  method: searched
+  source: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120157/2.9+RapidSense+API
+gaps:
+- No API keys, personal access tokens or machine credentials are documented for any
+  surface.
+- No mutual TLS, signed-request or fieldbus authentication is documented for the
+  PROFINET or CC-Link IE Field Basic interfaces.

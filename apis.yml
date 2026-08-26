@@ -1,23 +1,174 @@
 aid: realtime-robotics
 name: Realtime Robotics
-description: 'Realtime Robotics is a company surfaced via the API Evangelist harvest backlog (source:
-  secondary-market) and added to the network as a stub for full-pipeline profiling.'
+description: 'Realtime Robotics is a Boston-based industrial robotics software company
+  that builds collision-free autonomous motion planning for multi-robot workcells.
+  Its products are RapidPlan (the RapidPlan Create offline programming tool plus the
+  on-premise Realtime Controller that plans and deconflicts robot motion at runtime),
+  RapidSense (a sensor/perception layer that adds dynamic collision avoidance, volumes,
+  markers and change detection), and Resolver (a cloud application that optimises
+  cell layout and cycle time from simulation projects exported through Process Simulate,
+  Visual Components and MELSOFT Gemini connectors). Its integration surface is machine-facing
+  rather than web-facing: an inline-YAML ASCII command API over a TCP socket to the
+  Realtime Controller, a REST interface for RapidSense, PROFINET and CC-Link IE Field
+  Basic fieldbus interfaces for PLCs, and a published JSON Schema for the Resolver
+  Operations Query. A public Resolver Cloud REST API is documented as under development
+  and not yet publicly available.'
 url: https://raw.githubusercontent.com/api-evangelist/realtime-robotics/refs/heads/main/apis.yml
+image: https://rtr.ai/wp-content/uploads/2025/03/realtime-logo.svg
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-26'
 modified: '2026-08-26'
 tags:
 - Company
-apis: []
+- Robotics
+- Motion Planning
+- Industrial Automation
+- Manufacturing
+- Simulation
+- Collision Avoidance
+- Robot Programming
+- Machine Vision
+- Digital Twin
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+apis:
+- aid: realtime-robotics:rapidplan-ascii-api
+  name: RapidPlan Realtime Controller ASCII API
+  description: 'The ASCII API is the primary runtime integration surface for the Realtime
+    Controller. A client opens a TCP socket to the controller and exchanges inline
+    YAML 1.2 command strings (topic / type / id / data) terminated with CR+LF; responses
+    come back as inline YAML or, after SetResponseType, as CSV. Version 2.9 documents
+    roughly seventy commands across four groups: Project (SetResponseType, GetUnits,
+    SetUnits, GetMode, ClearFaults, LoadProject, GetLoadedProject, UnloadProject, SetDefaultProject,
+    EnterOperationMode, EnterConfigurationMode, Shutdown, UserLog, BeginInterlockRecording,
+    GenerateInterlockData), Robot (ActivateRobots, DeactivateRobot, Connect, Disconnect,
+    AcquireControl, ReleaseControl, SetMaxLinearAcceleration, SetMaxLinearSpeed, SetAlternateLocation,
+    SetInterruptBehavior, SetRobotPreset, GetRobotPresets, Move, CombinedMove, CancelMove,
+    HoldMove, ResumeMove, GetTargets, CreateTarget, UpdateTarget, RenameTarget, RemoveTarget,
+    AddConnection, RemoveConnection, GetJointConfiguration, GetTCPPose, IsOnTarget),
+    Scene Modeling (GetObjectStates, GetStatefulObjects, SetObjectState, GetFrames,
+    AddFrame, UpdateFrame, RemoveFrames, AddBox, AddObject, RemoveBoxes, RemoveObjects,
+    Reparent) and the combined SetWorkcellState. No OpenAPI is published for it.'
+  humanURL: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120890/2.9+Realtime+Robotics+RapidPlan+ASCII+API
+  baseURL: tcp://{realtime_controller_host}:9999
+  tags:
+  - Motion Planning
+  - Robotics
+  - Industrial Automation
+  properties:
+  - type: Documentation
+    url: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120890/2.9+Realtime+Robotics+RapidPlan+ASCII+API
+  - type: APIReference
+    url: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120890/2.9+Realtime+Robotics+RapidPlan+ASCII+API
+- aid: realtime-robotics:rapidsense-api
+  name: RapidSense API
+  description: 'RapidSense 2.x exposes a REST interface on port 11235 of the Realtime
+    Controller alongside equivalent ASCII commands. Documented resources are /volumes
+    (GET, POST, PUT, DELETE - cuboid perception volumes), /markers and /markers/{id}
+    (GET, POST, PUT, PATCH, DELETE - AprilTag 36h11 calibration markers), /sensors,
+    /status (RapidSense version, state, per-sensor status and active 5xxx error codes),
+    /heights (height-check filter query by centroid, width and length) and /changes,
+    /changes/{id}, /changes/{id}/objects (change-detection filters, marked under development).
+    No OpenAPI is published for it.'
+  humanURL: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120157/2.9+RapidSense+API
+  baseURL: http://{rapidsense_host}:11235
+  tags:
+  - Machine Vision
+  - Robotics
+  - Collision Avoidance
+  properties:
+  - type: Documentation
+    url: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120157/2.9+RapidSense+API
+  - type: APIReference
+    url: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120157/2.9+RapidSense+API
+- aid: realtime-robotics:resolver-cloud
+  name: Resolver Cloud
+  description: 'Resolver is Realtime Robotics'' cloud optimisation application, reached
+    at app.resolver.rtr.ai (global) and app-eu.resolver.rtr.ai (Europe). Work is submitted
+    as a .zip study containing a project.yaml workcell description, a cad/ folder and
+    an optional queries.json; Realtime Robotics publishes a JSON Schema for the queries.json
+    Operations Query and a written specification for project.yaml (rtr_yaml_version
+    4.2.0). The application''s own /api surface is an authenticated AWS API Gateway
+    (anonymous requests answer 403 Missing Authentication Token) and the documentation
+    states plainly that the public REST API is under development and not yet publicly
+    available.'
+  humanURL: https://resolver.rtr.ai/docs/api/overview/
+  baseURL: https://app.resolver.rtr.ai/api
+  tags:
+  - Simulation
+  - Motion Planning
+  - Optimization
+  properties:
+  - type: Documentation
+    url: https://resolver.rtr.ai/docs/user_guide/overview
+  - type: APIReference
+    url: https://resolver.rtr.ai/docs/api/overview/
 common:
+- type: DomainSecurity
+  url: security/realtime-robotics-domain-security.yml
 - type: Website
-  url: https://forgeglobal.com/realtime-robotics_stock/
+  url: https://rtr.ai/
+- type: Documentation
+  url: https://resolver.rtr.ai/docs/user_guide/overview
+- type: APIReference
+  url: https://resolver.rtr.ai/docs/api/overview/
+- type: GettingStarted
+  url: https://resolver.rtr.ai/docs/category/getting-started
+- type: Support
+  url: https://rtr.ai/support/
+- type: Blog
+  url: https://rtr.ai/resources/
+- type: GitHubOrganization
+  url: https://github.com/RealtimeRobotics
+- type: SignUp
+  url: https://rtr.ai/demo/
+- type: Login
+  url: https://app.resolver.rtr.ai/
+- type: PrivacyPolicy
+  url: https://rtr.ai/privacy-policy/
+- type: JSONSchema
+  url: json-schema/realtime-robotics-operations-query.schema.json
+- type: Packages
+  url: packages/realtime-robotics-packages.yml
+- type: SDKs
+  url: packages/realtime-robotics-packages.yml
+- type: WellKnown
+  url: well-known/realtime-robotics-well-known.yml
+- type: LLMsTxt
+  url: llms/realtime-robotics-llms.txt
+- type: Authentication
+  url: authentication/realtime-robotics-authentication.yml
+- type: OpenIDConnect
+  url: well-known/realtime-robotics-clerk-openid-configuration.json
+- type: OAuthScopes
+  url: scopes/realtime-robotics-scopes.yml
+- type: Conventions
+  url: conventions/realtime-robotics-conventions.yml
+- type: Idempotency
+  url: conventions/realtime-robotics-conventions.yml
+- type: ErrorCatalog
+  url: errors/realtime-robotics-error-codes.yml
+- type: Lifecycle
+  url: lifecycle/realtime-robotics-lifecycle.yml
+- type: ChangeLog
+  url: changelog/realtime-robotics-changelog.yml
+- type: DataModel
+  url: data-model/realtime-robotics-data-model.yml
+- type: Conformance
+  url: conformance/realtime-robotics-conformance.yml
+- type: Plans
+  url: plans/realtime-robotics-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/realtime-robotics-rate-limits.yml
+x-enrichment:
+  date: '2026-08-26'
+  status: enriched
+  artifacts_added: 20
+  pass: local-v1
+  note: >-
+    All 20 apis.yml pointer URLs were fetched and verified live (HTTP 200) on 2026-08-26.

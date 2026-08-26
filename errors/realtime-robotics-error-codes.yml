@@ -1,0 +1,82 @@
+generated: '2026-08-26'
+method: searched
+source: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120890/2.9+Realtime+Robotics+RapidPlan+ASCII+API
+name: Realtime Robotics error catalog
+description: >-
+  Error semantics across the two on-premise controller APIs. Realtime Robotics does not
+  publish RFC 9457 problem+json, and it does not publish a complete error-code registry
+  either - the ASCII API documents the error ENVELOPE and a set of named codes inline
+  with the commands that raise them, and RapidSense documents a reserved numeric range.
+  Everything below is quoted from the published references; no code has been invented and
+  no range has been enumerated beyond what the docs state.
+format: proprietary
+rfc9457: false
+envelopes:
+- api: realtime-robotics:rapidplan-ascii-api
+  shape: 'error: {code: <int>, msg: <string>}'
+  csv_shape: The code is always the second CSV field; 0 means success.
+  rules:
+  - Every response carries a code; 0 is success.
+  - When an error occurs, `data` is not returned - only `error`.
+  - In YAML responses `error` is present only on failure; in CSV it is always present.
+  - A DelayedResponse can carry an error even when the immediate Response succeeded
+    (planning succeeded, execution was interrupted).
+- api: realtime-robotics:rapidsense-api
+  shape: HTTP status code plus a JSON body per endpoint
+  documented_statuses:
+  - status: 200
+    meaning: OK - response accepted
+  - status: 404
+    meaning: No marker exists for that ID (GET /markers/{id})
+  - status: 422
+    meaning: >-
+      Unprocessable Content - one or more markers with the provided IDs already exists,
+      the ID is outside the 36h11 tag family range, or the length is outside the
+      acceptable range
+  status_field: >-
+    ASCII-side RapidSense queries return a numeric `status`; 0 is success, otherwise the
+    error code is returned in its place and the result value is omitted.
+named_codes:
+- code: ROUTE_NOT_FOUND
+  raised_by: Move (goal type route)
+  meaning: No route with the given name exists in the loaded project.
+- code: ROUTE_NOT_IN_ROBOT
+  raised_by: Move (goal type route)
+  meaning: The named route does not belong to the specified robot.
+- code: ROUTE_NOT_IN_PRESET
+  raised_by: Move (goal type route)
+  meaning: The named route is not in the current or requested preset.
+- code: '*_NOT_FOUND'
+  raised_by: any command given a null-like argument
+  meaning: >-
+    Values such as null, ~, '', Null and NULL are treated as ordinary strings; when they
+    do not resolve against the loaded project or settings the command is rejected with an
+    "<entity>_NOT_FOUND" error. The docs give the pattern, not the full list of entities.
+- code: '7005'
+  raised_by: CancelMove
+  meaning: >-
+    Documented in the RapidPlan 2.9 release notes as a known issue - CancelMove returns
+    error 7005 on paths with many edges (RAPID-50487).
+  source: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467116725/RapidPlan+2.9+Release+Notes
+- code: ERROR_ON_SPLINE_WATCHDOG_ERROR
+  raised_by: ABB native control
+  meaning: >-
+    Known issue - large motions with low-accuracy corner settings can deviate from the
+    planner's expectation by up to 4 cm.
+  source: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467116725/RapidPlan+2.9+Release+Notes
+code_ranges:
+- range: 5000-5999
+  api: realtime-robotics:rapidsense-api
+  meaning: >-
+    Reserved for RapidSense errors, returned as a list of active error codes by
+    GetRapidSenseStatus and GET /status. The reference notes explicitly that not all
+    codes in the range are used, and points at a recovery-strategy table on the same
+    page for the codes that are.
+  enumerated_here: false
+  source: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120157/2.9+RapidSense+API
+gaps:
+- No single consolidated error-code reference exists; codes are documented beside the
+  commands that raise them and inside per-version release notes.
+- The numeric ASCII API code space (0 = success, 7005 observed) is never enumerated in
+  public documentation.
+- No machine-readable error catalog (JSON/YAML/OpenAPI responses) is published.

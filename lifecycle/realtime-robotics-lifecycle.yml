@@ -1,0 +1,91 @@
+generated: '2026-08-26'
+method: searched
+source: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs
+name: Realtime Robotics API lifecycle
+description: >-
+  Versioning, release and support posture across the RapidPlan/RapidSense on-premise
+  stack and the Resolver cloud application. Realtime Robotics versions documentation
+  per release rather than versioning an API endpoint, and keeps every historical
+  version's documentation online.
+versioning:
+  scheme_rapidplan: MAJOR.MINOR(.PATCH) tied to the RapidPlan product release
+  scheme_resolver: calendar versioning, YYYY.MM.DD
+  current_rapidplan: 2.10.1
+  current_rapidplan_docs_note: >-
+    RapidPlan 2.10.1 explicitly shares the same user documentation as RapidPlan 2.9.
+  current_resolver: 2026.08.24
+  current_resolver_connectors:
+    process_simulate_connector: 1.26.0
+    visual_components_connector: 1.22.0
+    melsoft_gemini_connector: 1.22.0
+  in_url: false
+  version_header: none
+  documented_versions:
+  - '2.1'
+  - '2.2'
+  - '2.3'
+  - '2.4'
+  - '2.5'
+  - '2.6'
+  - '2.7'
+  - '2.9'
+  - '2.10.1'
+  note: >-
+    Each RapidPlan version has its own ASCII API reference page, and every one of them
+    stays published - eight historical ASCII API references are live alongside 2.9. The
+    2.0 rewrite is documented as a breaking change from 1.x (commands renamed, request
+    syntax moved to inline YAML); every 2.x change since is documented as additive, with
+    a stated design goal that new optional arguments carry defaults so existing client
+    code keeps working.
+backwards_compatibility:
+  stated_policy: >-
+    "Inline YAML allows the API to be more easily backwards compatible. When arguments
+    are added in the future, they will have a default value, so that existing code will
+    remain functional on newer software versions."
+  source: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120890/2.9+Realtime+Robotics+RapidPlan+ASCII+API
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  observed_removals:
+  - command: MultiRobotMove
+    removed_in: '2.6'
+    announced: 2023-11-29 in the ASCII API revision history
+    notice_period: none stated
+  note: >-
+    Removals are recorded in the ASCII API page's own revision history, but there is no
+    deprecation policy, no notice period, and no RFC 8594 Sunset/Deprecation signalling.
+    A superseded RapidPlan version's documentation is moved under "Older Software
+    Releases" rather than deleted.
+  older_releases_index: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3489857548/Older+Software+Releases
+release_notes:
+  rapidplan: per-version Confluence pages (2.3, 2.4, 2.5, 2.6, 2.7, 2.9, 2.10.1)
+  resolver: dated posts on https://resolver.rtr.ai/blog
+  feeds:
+  - https://resolver.rtr.ai/blog/rss.xml
+  - https://resolver.rtr.ai/blog/atom.xml
+  see: changelog/realtime-robotics-changelog.yml
+known_limitations_published: true
+known_limitations_url: https://realtimerobotics.atlassian.net/wiki/spaces/rapidplandocs/pages/3467120875/2.9+Known+Limitations
+status_page:
+  published: false
+  note: >-
+    No status page was found on any Realtime Robotics host. Probed rtr.ai, resolver.rtr.ai
+    and the app hosts; status.rtr.ai does not resolve. This is consistent with an
+    on-premise product, but the Resolver Cloud application is a hosted multi-region
+    service (global + Europe) with no published availability signal.
+sla:
+  published: false
+support:
+  channel: Atlassian Jira Service Management customer portal
+  url: https://realtimerobotics.atlassian.net/servicedesk/customer/portal/3/group/3/create/10161
+  feature_requests: same portal
+  in_product: >-
+    Resolver 2026.08.24 added a "Report Feedback to Support" dialog that can attach
+    project and study data (2GB upload limit) and surfaces a copyable Study ID.
+  faq: https://resolver.rtr.ai/docs/user_guide/faqs
+regions:
+- name: global
+  app: https://app.resolver.rtr.ai/
+- name: europe
+  app: https://app-eu.resolver.rtr.ai/
