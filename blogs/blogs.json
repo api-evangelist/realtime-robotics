@@ -2,7 +2,7 @@
   "repo": "realtime-robotics",
   "feeds": [
     {
-      "source": "https://rtr.ai/support/",
+      "source": "https://rtr.ai/resources/",
       "feed_url": "https://rtr.ai/feed/",
       "title": "",
       "saved": 0,
@@ -17,5 +17,5 @@
     }
   ],
   "post_count": 10,
-  "fetched": "2026-10-03T12:30:02Z"
+  "fetched": "2026-10-10T13:15:00Z"
 }
